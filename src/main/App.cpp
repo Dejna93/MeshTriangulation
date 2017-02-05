@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "include/Visualization.h"
+#include "include/Io.h"
 
 #include <boost/thread/thread.hpp>
 #include <pcl/common/common_headers.h>
@@ -197,208 +198,16 @@ void laplacianMeshSmoothing(const pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud , f
 int
 main(int argc, char** argv)
 {
-	// --------------------------------------
-	// -----Parse Command Line Arguments-----
-	// --------------------------------------
-	if (pcl::console::find_argument(argc, argv, "-h") >= 0)
-	{
-		printUsage(argv[0]);
-		return 0;
-	}
-	bool simple(false), rgb(false), custom_c(false), 
-		shapes(false), viewports(false), interaction_customization(false);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
+    Io ioManager = Io();
+    if (ioManager.input(argc, argv)) {
+        ioManager.printStack();
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PCLPointCloud2 cloud_blob;
+        pcl::io::loadPCDFile(ioManager.getFilepath().string(), cloud_blob);
+        pcl::fromPCLPointCloud2(cloud_blob, *cloud);
+        cout << "Writer";
+        ioManager.writeToPCD(cloud, ioManager.getFilepath());
+    }
+    return 0;
 
-	std::string filename("");
-	if (pcl::console::parse_argument(argc, argv, "-f",filename) != -1) {
-	std::cout << "Filepath " << filename << "\n";
-		pcl::PCLPointCloud2 cloud_blob;
-		//"C:\\Users\\callo\\Downloads\\tosca_hires\\centaur2.pcd"
-		pcl::io::loadPCDFile(filename, cloud_blob);
-
-		pcl::fromPCLPointCloud2(cloud_blob, *basic_cloud_ptr);
-
-	}
-	if (pcl::console::find_argument(argc, argv, "-s") >= 0)
-	{
-		simple = true;
-		std::cout << "Simple visualisation example\n";
-	}
-	else if (pcl::console::find_argument(argc, argv, "-c") >= 0)
-	{
-		custom_c = true;
-		std::cout << "Custom colour visualisation example\n";
-	}
-	else if (pcl::console::find_argument(argc, argv, "-r") >= 0)
-	{
-		rgb = true;
-		std::cout << "RGB colour visualisation example\n";
-	}
-	else if (pcl::console::find_argument(argc, argv, "-a") >= 0)
-	{
-		shapes = true;
-		std::cout << "Shapes visualisation example\n";
-	}
-	else if (pcl::console::find_argument(argc, argv, "-v") >= 0)
-	{
-		viewports = true;
-		std::cout << "Viewports example\n";
-	}
-	else if (pcl::console::find_argument(argc, argv, "-i") >= 0)
-	{
-		interaction_customization = true;
-		std::cout << "Interaction Customization example\n";
-	}
-	else
-	{
-		printUsage(argv[0]);
-		return 0;
-	}
-
-	// ------------------------------------
-	// -----Create example point cloud-----
-	// ------------------------------------
-	// ----------------------------------------------------------------
-	// -----Calculate surface normals with a search radius of 0.05-----
-	// ----------------------------------------------------------------
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
-	ne.setInputCloud(basic_cloud_ptr);
-	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
-	ne.setSearchMethod(tree);
-	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1(new pcl::PointCloud<pcl::Normal>);
-	ne.setRadiusSearch(0.05);
-	ne.compute(*cloud_normals1);
-
-	// ---------------------------------------------------------------
-	// -----Calculate surface normals with a search radius of 0.1-----
-	// ---------------------------------------------------------------
-	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals2(new pcl::PointCloud<pcl::Normal>);
-	ne.setRadiusSearch(0.1);
-	ne.compute(*cloud_normals2);
-
-	//----------FILTERING
-	/*pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::PassThrough<pcl::PointXYZ> pass;
-	pass.setInputCloud(basic_cloud_ptr);
-	pass.setFilterFieldName("z");
-	pass.setFilterLimits(0.0, 1.0);
-	//pass.setFilterLimitsNegative (true);
-	pass.filter(*cloud_filtered);
-	*/
-
-	//noise remover
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
-
-	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-	sor.setInputCloud(basic_cloud_ptr);
-	sor.setMeanK(50);
-	sor.setStddevMulThresh(1.0);
-	sor.filter(*cloud_filtered);
-
-	/*
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;
-	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
-	tree->setInputCloud(cloud_filtered);
-	n.setInputCloud(cloud_filtered);
-	n.setSearchMethod(tree);
-	n.setKSearch(10);
-	n.compute(*normals);
-
-
-	// Concatenate the XYZ and normal fields*
-	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
-	pcl::concatenateFields(*cloud_filtered, *normals, *cloud_with_normals);
-	//* cloud_with_normals = cloud + normals
-
-
-	// Create search tree*
-	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);
-	tree2->setInputCloud(cloud_with_normals);
-
-
-	// Initialize objects
-	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;
-	pcl::PolygonMesh triangles;
-
-	//lapliacion smooth
-
-	// Set the maximum distance between connected points (maximum edge length)
-	gp3.setSearchRadius(2);
-
-	// Set typical values for the parameters
-	gp3.setMu(2.5);
-	gp3.setMaximumNearestNeighbors(1000);
-	gp3.setMaximumSurfaceAngle(M_PI / 4); // 45 degrees
-	gp3.setMinimumAngle(M_PI / 18); // 10 degrees
-	gp3.setMaximumAngle(2 * M_PI / 3); // 120 degrees
-	gp3.setNormalConsistency(false);
-
-	// Get result
-	gp3.setInputCloud(cloud_with_normals);
-	gp3.setSearchMethod(tree2);
-	gp3.reconstruct(triangles);
-
-	pcl::io::savePolygonFileSTL("data.stl", triangles);*/
-	//showSomebean(cloud_filtered);
-	laplacianMeshSmoothing(cloud_filtered,50.0);
-	cout << "begin passthrough filter" << endl;
-	pcl::PointCloud<pcl::PointXYZ>::Ptr filtered(new pcl::PointCloud<pcl::PointXYZ>());
-	pcl::PassThrough<pcl::PointXYZ> filter;
-	filter.setInputCloud(cloud_filtered);
-	filter.filter(*filtered);
-	cout << "passthrough filter complete" << endl;
-
-	cout << "begin normal estimation" << endl;
-	//pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
-	ne.setInputCloud(filtered);
-	ne.setRadiusSearch(2);
-	Eigen::Vector4f centroid;
-	compute3DCentroid(*filtered, centroid);
-	ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
-
-	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());
-	ne.compute(*cloud_normals);
-	cout << "normal estimation complete" << endl;
-	cout << "reverse normals' direction" << endl;
-
-	for (size_t i = 0; i < cloud_normals->size(); ++i) {
-		cloud_normals->points[i].normal_x *= -1;
-		cloud_normals->points[i].normal_y *= -1;
-		cloud_normals->points[i].normal_z *= -1;
-	}
-
-	cout << "combine points and normals" << endl;
-	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<pcl::PointNormal>());
-	concatenateFields(*filtered, *cloud_normals, *cloud_smoothed_normals);
-
-	cout << "begin poisson reconstruction" << endl;
-	pcl::Poisson<pcl::PointNormal> poisson;
-	poisson.setDepth(7);
-	poisson.setInputCloud(cloud_smoothed_normals);
-	pcl::PolygonMesh mesh;
-	poisson.reconstruct(mesh);
-	pcl::io::savePolygonFileSTL("data.stl", mesh);
-
-	Visualization viewer = Visualization();
-
-	viewer.view_visaulization(viewer.simpleVis(cloud_filtered));
-	//boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
-	//if (simple)
-	//{
-	//		//	viewer = simpleVis(basic_cloud_ptr);
-	//	viewer = simpleVis(cloud_filtered);
-	//}
-	//else if (interaction_customization)
-	//{
-	//	viewer = interactionCustomizationVis();
-	//}
-
-	////--------------------
-	//// -----Main loop-----
-	////--------------------
-	//while (!viewer->wasStopped())
-	//{
-	//	viewer->spinOnce(100);
-	//	boost::this_thread::sleep(boost::posix_time::microseconds(100000));
-	//}
 }
