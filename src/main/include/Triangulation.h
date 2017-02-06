@@ -1,4 +1,4 @@
-#pragma once
+
 
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/common/common_headers.h>
@@ -9,11 +9,13 @@
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
-class Mesh:
+
+class Triangulation
 {
+    /*
 public:
-    Mesh();
-    ~Mesh();
+    Triangulation();
+    ~Triangulation();
 
   //  virtual pcl::PolygonMesh calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius) = 0 ;
 
@@ -25,5 +27,5 @@ public:
     pcl::PointCloud<pcl::PointXYZ>::Ptr getCloud();
 protected:
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
-
-}
+*/
+};

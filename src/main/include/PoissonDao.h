@@ -1,9 +1,8 @@
 //
 // Created by dejna on 06.02.17.
 //
-#pragma once
-//#ifndef MY_GRAND_PROJECT_POISSONDAO_H
-//#define MY_GRAND_PROJECT_POISSONDAO_H
+#ifndef MY_GRAND_PROJECT_POISSONDAO_H
+#define MY_GRAND_PROJECT_POISSONDAO_H
 
 
 class PoissonDao {
@@ -13,7 +12,7 @@ public:
 
     ~PoissonDao();
 
-    // void loadParams(auto & section);
+    void loadParams(auto &section);
     void print();
 
     int getRadius();
@@ -78,4 +77,4 @@ private:
 };
 
 
-//#endif //MY_GRAND_PROJECT_POISSONDAO_H
+#endif //MY_GRAND_PROJECT_POISSONDAO_H

@@ -1,25 +1,26 @@
-#include "include/Triangulation.h"
 
-Mesh::Mesh(){
+
+/*
+Triangulation::Triangulation(){
 
 }
 
-Mesh::~Mesh(){}
+Triangulation::~Triangulation(){}
 
 void
-Mesh::setCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+Triangulation::setCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 {
   this->cloud = cloud;
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr
-Mesh::getCloud()
+Triangulation::getCloud()
 {
   return this->cloud;
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr
-Mesh::noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mult)
+Triangulation::noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mult)
 {
   pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
   sor.setInputCloud(basic_cloud_ptr);
@@ -33,3 +34,4 @@ Mesh::noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double st
   sor.filter(*cloud);
   return cloud;
 }
+*/

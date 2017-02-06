@@ -6,28 +6,13 @@
 #include "include/Visualization.h"
 #include "include/Io.h"
 
-#include <boost/thread/thread.hpp>
-#include <pcl/common/common_headers.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/io/vtk_io.h>
-#include <pcl/io/vtk_lib_io.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/console/parse.h>
-
 #include <pcl/filters/statistical_outlier_removal.h>
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/features/normal_3d.h>
 #include <pcl/surface/gp3.h>
 
 
-#include <pcl/common/common.h>
-#include <pcl/search/kdtree.h>
 #include <pcl/features/normal_3d_omp.h>
-#include <pcl/point_types.h>
 #include <pcl/surface/mls.h>
-#include <pcl/surface/poisson.h>
-#include <pcl/filters/passthrough.h>
+
 
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/voxel_grid.h>
@@ -38,11 +23,8 @@
 
 
 #include <pcl/surface/concave_hull.h>
-#include <pcl/surface/vtk_smoothing/vtk.h>
 #include <pcl/surface/vtk_smoothing/vtk_mesh_smoothing_laplacian.h>
 #include <pcl/surface/vtk_smoothing/vtk_utils.h>
-#include <vtkSmartPointer.h>
-#include <vtkSmoothPolyDataFilter.h>
 
 
 unsigned int text_id = 0;

@@ -64,6 +64,8 @@ public:
 
 
 private:
+    PoissonDao poissonDao;
+
 	boost::filesystem::path filepath;
     boost::filesystem::path current_folder;
 

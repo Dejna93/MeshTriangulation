@@ -1,9 +1,10 @@
-#pragma once
+
+#include "include/PoissonTriangulation.h"
 
 PoissonTriangulation::PoissonTriangulation(){}
 
-~PoissonTriangulation::PoissonTriangulation(){}
-
+PoissonTriangulation::~PoissonTriangulation() {}
+/*
 pcl::PolygonMesh
 PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius, int thread_num,
                                     int depth           , int degree       , float	samples_per_node , float scale ,
@@ -22,7 +23,7 @@ PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, f
 	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());
   ne.compute(*cloud_normals);
 
-  for(size_t i = 0 ; i < cloud_normals->size ; ++i)
+  for(size_t i = 0 ; i < cloud_normals->size() ; ++i)
   {
     cloud_normals->points[i].normal_x *= -1;
     cloud_normals->points[i].normal_y *= -1;
@@ -32,7 +33,7 @@ PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, f
   pcl::PointCloud<pcl::PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<pcl::PointNormal>());
   concatenateFields(*cloud, *cloud_normals, *cloud_smoothed_normals);
 
-  cout << "Begin poisson reconstruction \n";
+  std::cout << "Begin poisson reconstruction \n";
   pcl::Poisson<pcl::PointNormal>poisson;
   //Set the maximum depth of the tree that will be used for surface reconstruction
   poisson.setDepth(depth);
@@ -49,7 +50,7 @@ PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, f
   poisson.setConfidence(confidence);
   //Enabling this flag tells the reconstructor to add the polygon barycenter when triangulating polygons with more than three vertices.
   //Using this parameter helps reduce the memory overhead at the cost of a small increase in extraction time. (In practice, we have found that for reconstructions of depth 9 or higher a subdivide depth of 7 or 8 can greatly reduce the memory usage.)
-  poisson.setMinifold(manifold);
+  //poisson.setMinifold(manifold);
   //Enabling this flag tells the reconstructor to output a polygon mesh (rather than triangulating the results of Marching Cubes).
   poisson.setOutputPolygons(output_polygon);
   //Set the the depth at which a block Gauss-Seidel solver is used to solve the Laplacian equation.
@@ -106,7 +107,7 @@ PoissonTriangulation::splitCloudToClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr c
   {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
     for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
-      cloud_cluster->points.push_back(cloud->points[*pit]); //*
+      cloud_cluster->points.push_back(cloud->points[*pit]); //
       cloud_cluster->width = cloud_cluster->points.size();
       cloud_cluster->height = 1;
       cloud_cluster->is_dense = true;
@@ -118,7 +119,7 @@ PoissonTriangulation::splitCloudToClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr c
       //writeSTL
 
     std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size() << " data points." << std::endl;
-    //writer.write<pcl::PointXYZ>(ss.str(), *cloud_cluster, false); //*
+    //writer.write<pcl::PointXYZ>(ss.str(), *cloud_cluster, false); //
   }
   return cloud_clusters;
 }
@@ -137,3 +138,4 @@ void PoissonTriangulation::makeSTLfromClusters(  pcl::PointCloud<pcl::PointXYZ>:
      }
    }
 }
+*/

@@ -4,11 +4,13 @@
 
 Io::Io()
 {
+    this->poissonDao = PoissonDao();
 }
 
 
 Io::~Io()
 {
+
 }
 
 int Io::input(int argc, char **argv) {
@@ -105,19 +107,53 @@ void Io::setParams(std::string filepath) {
 
     namespace pt = boost::property_tree;
     pt::ptree propTree;
-    PoissonDao poissonDao = PoissonDao();
+
     boost::property_tree::ini_parser::read_ini(filepath, propTree);
 
     for (auto &section : propTree) {
 
         if (section.first == "poisson") {
 
-            poissonDao.loadParams(section.second);
-
+            for (auto &key : section.second) {
+                //std::cout << key.first << "=" << key.second.get_value<std::string>() << "\n";
+                if (key.first == "radius") {
+                    poissonDao.setRadius(key.second.get_value<int>());
+                }
+                if (key.first == "thread_num") {
+                    poissonDao.setThreadNum(key.second.get_value<int>());
+                }
+                if (key.first == "depth") {
+                    poissonDao.setDepth(key.second.get_value<int>());
+                }
+                if (key.first == "degree") {
+                    poissonDao.setDegree(key.second.get_value<int>());
+                }
+                if (key.first == "samples_per_node") {
+                    poissonDao.setSamplePerNode(key.second.get_value<int>());
+                }
+                if (key.first == "scale") {
+                    poissonDao.setScale(key.second.get_value<float>());
+                }
+                if (key.first == "iso_divide") {
+                    poissonDao.setIsoDivide(key.second.get_value<float>());
+                }
+                if (key.first == "confidence") {
+                    poissonDao.setConfidence(key.second.get_value<int>());
+                }
+                if (key.first == "manifold") {
+                    poissonDao.setManifold(key.second.get_value<int>());
+                }
+                if (key.first == "output_polygon") {
+                    poissonDao.setOutputPolygon(key.second.get_value<int>());
+                }
+                if (key.first == "solver_divide") {
+                    poissonDao.setSolverDivide(key.second.get_value<int>());
+                }
+            }
         }
 
     }
-
+    poissonDao.print();
 }
 
 void Io::setShowVisualisation(int visualisation) {
