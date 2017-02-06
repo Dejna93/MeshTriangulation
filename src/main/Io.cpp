@@ -25,7 +25,7 @@ int Io::input(int argc, char **argv) {
     }
     parseSavingPCD(argc, argv);
     parseVisualisation(argc, argv);
-    parseFitlering(argc, argc);
+    parseFitlering(argc, argv);
 
 }
 
@@ -41,8 +41,9 @@ int Io::parseInital(int argc, char **argv) {
 int Io::parseFilepath(int argc, char **argv) {
     std::string filename("");
     if (pcl::console::parse_argument(argc, argv, "-f", filename) != -1) {
-
+        std::cout << filename;
         return this->setFilepath(filename);
+
     }
     return 0;
 }
@@ -81,6 +82,9 @@ int Io::setFilepath(std::string filepath) {
     boost::filesystem::path tmp{filepath};
     if (boost::filesystem::exists(tmp)) {
         this->filepath = tmp;
+        this->current_folder = this->filepath.parent_path();
+        this->setPointFolder(this->current_folder);
+        this->setSTLFolder(this->current_folder);
         return 1;
     }
     std::cout << "Filepath does not exists \n";
@@ -124,6 +128,37 @@ bool Io::isFiltering() {
     return this->filtering;
 }
 
+boost::filesystem::path Io::createFolder(std::string filepath) {
+    boost::filesystem::path path(filepath);
+    return this->createFolder(path);
+}
+
+boost::filesystem::path Io::createFolder(boost::filesystem::path filepath) {
+    boost::filesystem::path folder_path = filepath.parent_path();
+
+    if (boost::filesystem::is_directory(folder_path)) {
+        folder_path /= boost::lexical_cast<std::string>(id_from_file(filepath));
+        cout << "folder_path " << folder_path.string() << "\n";
+        create_folder(folder_path);
+        return folder_path;
+    }
+    return folder_path;
+}
+
+
+int Io::id_from_file(boost::filesystem::path filepath) {
+
+    std::string file = filepath.string();
+    stringstream strStream;
+
+    for (auto it = file.rbegin(); it != file.rend(); ++it) {
+        if (isdigit(*it)) {
+            strStream << *it;
+        }
+    }
+    return boost::lexical_cast<int>(strStream.str());
+}
+
 
 void Io::printUsage(const char *name) {
     std::cout << "\n\nUsage: " << name << " [options]\n\n"
@@ -138,20 +173,75 @@ void Io::printUsage(const char *name) {
 }
 
 
-int Io::nr_from_file(std::string filepath) {
-//	std::regex wzorzec("([0 - 9])\d+");
-	//std::string result = "";
-	//if (std::regex_search(filepath, result, wzorzec))
-	//{
-	//	return std::stoi(result);
-	//}
-	return 0;
+int Io::create_folder(boost::filesystem::path path) {
+    if (!boost::filesystem::exists(path)) {
+        int result = boost::filesystem::create_directory(path);
+        if (result) {
+            this->current_folder = path;
+        }
+        return result;
+    }
+    return 0;
 }
 
-int Io::writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, string filename, int number)
-{
-	pcl::PCDWriter writer;
-	return writer.write<pcl::PointXYZ>(filename, *cloud, false); //*
+int Io::writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, boost::filesystem::path path) {
+    pcl::PCDWriter writer;
+    boost::filesystem::path created_folder = createFolder(path);
+    writer.write<pcl::PointXYZ>((created_folder /= path.filename()).string(), *cloud, false);
+    return 1;
+}
+
+int Io::writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+
+    return writeToPCD(cloud, this->filepath);
+}
+
+void Io::setPointFolder(boost::filesystem::path filepath) {
+    if (boost::filesystem::exists(filepath)) {
+        if (boost::filesystem::is_directory(filepath) && filepath.filename() == "points") {
+            this->point_folder = filepath;
+        } else {
+            boost::filesystem::path stl_tmp = filepath.parent_path() /= "points";
+            if (boost::filesystem::exists(stl_tmp)) {
+                this->stl_folder = stl_tmp;
+            } else {
+                this->stl_folder = createFolder(stl_tmp);
+            }
+        }
+    }
+
+}
+
+void Io::setSTLFolder(boost::filesystem::path filepath) {
+    if (boost::filesystem::exists(filepath)) {
+        if (boost::filesystem::is_directory(filepath) && filepath.filename() == "stl") {
+            this->stl_folder = filepath;
+        } else {
+            boost::filesystem::path stl_tmp = filepath.parent_path() /= "stl";
+            if (boost::filesystem::exists(stl_tmp)) {
+                this->stl_folder = stl_tmp;
+            } else {
+                this->stl_folder = createFolder(stl_tmp);
+            }
+        }
+    }
+}
+
+int Io::isFolderByName(std::string name, boost::filesystem::path folder) {
+    return 0;
+}
+
+void Io::printStack() {
+    cout << "Filepath \t" << filepath.string()
+         << "\n Current folder\t" << current_folder.string()
+         << "\n Points folder\t" << point_folder.string()
+         << "\n Stl folder\t" << stl_folder.string()
+         << "\n Smooting \t" << smoothing_method
+         << "\n Filtering \t" << filtering
+         << "\n Visualisation \t" << show_visualisation
+         << "\n Save PCD \t" << save_pcd
+         << "\n\n";
+    setPointFolder(current_folder);
 }
 
 
