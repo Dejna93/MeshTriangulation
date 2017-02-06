@@ -6,18 +6,20 @@ Mesh::Mesh(){
 
 Mesh::~Mesh(){}
 
-void Mesh::setCloud(pcl::PointCloud<pcl::PointXYZ)>::Ptr cloud)
+void
+Mesh::setCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 {
   this->cloud = cloud;
 }
 
-pcl::PointCloud<pcl::PointXYZ)>::Ptr Mesh::getCloud()
+pcl::PointCloud<pcl::PointXYZ>::Ptr
+Mesh::getCloud()
 {
   return this->cloud;
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr
-Mesh::noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int 	nr_k ,	double stddev_mult)
+Mesh::noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mult)
 {
   pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
   sor.setInputCloud(basic_cloud_ptr);

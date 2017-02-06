@@ -23,6 +23,7 @@ int Io::input(int argc, char **argv) {
     if (!parseMethodSmoothing(argc, argv)) {
         return 0;
     }
+    parseParams(argc, argv);
     parseSavingPCD(argc, argv);
     parseVisualisation(argc, argv);
     parseFitlering(argc, argv);
@@ -48,6 +49,15 @@ int Io::parseFilepath(int argc, char **argv) {
     return 0;
 }
 
+int Io::parseParams(int argc, char **argv) {
+    std::string filename("");
+    if (pcl::console::parse_argument(argc, argv, "-p", filename) != -1) {
+        this->setParams(filename);
+        return 1;
+    }
+    return 0;
+}
+
 int Io::parseMethodSmoothing(int argc, char **argv) {
     int method = 0;
     if (pcl::console::parse_argument(argc, argv, "-s", method) != -1) {
@@ -58,7 +68,7 @@ int Io::parseMethodSmoothing(int argc, char **argv) {
 }
 
 void Io::parseSavingPCD(int argc, char **argv) {
-    if (pcl::console::find_argument(argc, argv, "-p") >= 0) {
+    if (pcl::console::find_argument(argc, argv, "-t") >= 0) {
         this->setSavingPcd(1);
     }
     this->setSavingPcd();
@@ -89,6 +99,25 @@ int Io::setFilepath(std::string filepath) {
     }
     std::cout << "Filepath does not exists \n";
     return 0;
+}
+
+void Io::setParams(std::string filepath) {
+
+    namespace pt = boost::property_tree;
+    pt::ptree propTree;
+    PoissonDao poissonDao = PoissonDao();
+    boost::property_tree::ini_parser::read_ini(filepath, propTree);
+
+    for (auto &section : propTree) {
+
+        if (section.first == "poisson") {
+
+            poissonDao.loadParams(section.second);
+
+        }
+
+    }
+
 }
 
 void Io::setShowVisualisation(int visualisation) {

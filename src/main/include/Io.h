@@ -9,11 +9,14 @@
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 #include <iterator>
 #include <iostream>
 #include <sstream>
 
 #include <vector>
+#include "include/PoissonDao.h"
 
 using namespace std;
 
@@ -28,6 +31,8 @@ public:
 
 	// SETTERS and GETTERS
 	int setFilepath(std::string filepath);
+
+    void setParams(std::string filepath);
 
 	void setShowVisualisation(int visualisation = 0);
 
@@ -80,6 +85,8 @@ private:
 	int parseInital(int argc, char **argv);
 
 	int parseFilepath(int argc, char **argv);
+
+    int parseParams(int argc, char **argv);
 
 	int parseMethodSmoothing(int argc, char **argv);
 

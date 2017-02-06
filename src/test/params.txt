@@ -1,0 +1,12 @@
+[poisson]
+radius=2
+thread_num=4
+depth=9
+degree=5
+samples_per_node=2
+scale=1.1
+iso_divide=9
+confidence=0
+manifold=0
+output_polygon=0
+solver_divide=8

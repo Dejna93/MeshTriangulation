@@ -4,12 +4,14 @@ PoissonTriangulation::PoissonTriangulation(){}
 
 ~PoissonTriangulation::PoissonTriangulation(){}
 
-pcl::PolygonMesh PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius,
-  int depth           ,int degree       ,float	samples_per_node ,   float scale ,
-  int iso_divide      ,bool confidence  ,bool	manifold           ,
-  bool output_polygon ,int solver_divide	)
+pcl::PolygonMesh
+PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius, int thread_num,
+                                    int depth           , int degree       , float	samples_per_node , float scale ,
+                                    int iso_divide      , bool confidence  , bool	manifold           ,
+                                    bool output_polygon , int solver_divide	)
 {
   pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
+  ne.setNumberOfThreads(thread_num);
   ne.setInputCloud(cloud);
   ne.setRadiusSearch(radius);
 
