@@ -17,6 +17,7 @@
 
 #include <vector>
 #include "include/PoissonDao.h"
+#include <typeinfo>
 
 using namespace std;
 
@@ -98,6 +99,7 @@ private:
 	void parseVisualisation(int argc, char **argv);
 
 	void parseFitlering(int argc, char **argv);
+
 
     int id_from_file(boost::filesystem::path filepath);
 

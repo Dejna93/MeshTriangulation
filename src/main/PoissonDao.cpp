@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 #include "include/PoissonDao.h"
 
 PoissonDao::PoissonDao() {}
@@ -11,50 +12,48 @@ PoissonDao::~PoissonDao() {
 
 }
 
-void PoissonDao::loadParams(auto &section) {
-    for (auto &key : section.second) {
+void PoissonDao::loadParams(std::string name, std::string value) {
+
         //std::cout << key.first << "=" << key.second.get_value<std::string>() << "\n";
-        auto node = key.second;
-        /*if (key.first == "radius")
+    if (name == "radius")
         {
-            int value = node.get_value<int>() ;
+            setRadius(boost::lexical_cast<int>(value));
         }
-        if (key.first == "thread_num")
+    if (name == "thread_num")
         {
-            setThreadNum((int)key.second.get_value<int>());
+            setThreadNum(boost::lexical_cast<int>(value));
         }
-        if (key.first == "depth")
+    if (name == "depth")
         {
-            setDepth((int)key.second.get_value<int>());
+            setDepth(boost::lexical_cast<int>(value));
         }
-        if (key.first == "degree" ) {
-            setDegree((int)key.second.get_value<int>());
+    if (name == "degree") {
+        setDegree(boost::lexical_cast<int>(value));
         }
-        if (key.first == "samples_per_node")
+    if (name == "samples_per_node")
         {
-            setSamplePerNode((int)key.second.get_value<int>());
+            setSamplePerNode(boost::lexical_cast<int>(value));
         }
-        if (key.first == "scale")
+    if (name == "scale")
         {
-            setScale((float)key.second.get_value<float>());
+            setScale(boost::lexical_cast<float>(value));
         }
-        if (key.first == "iso_divide"){
-            setIsoDivide((float)key.second.get_value<float>());
+    if (name == "iso_divide") {
+        setIsoDivide(boost::lexical_cast<int>(value));
         }
-        if (key.first == "confidence"){
-            setConfidence((int)key.second.get_value<int>());
+    if (name == "confidence") {
+        setConfidence(boost::lexical_cast<int>(value));
         }
-        if (key.first == "manifold") {
-            setManifold((int)key.second.get_value<int>());
+    if (name == "manifold") {
+        setManifold(boost::lexical_cast<int>(value));
         }
-        if (key.first == "output_polygon"){
-            setOutputPolygon((int)key.second.get_value<int>());
+    if (name == "output_polygon") {
+        setOutputPolygon(boost::lexical_cast<int>(value));
         }
-        if (key.first == "solver_divide") {
-            setSolverDivide((int)key.second.get_value<int>());
-        }*/
+    if (name == "solver_divide") {
+        setSolverDivide(boost::lexical_cast<int>(value));
     }
-    print();
+    // print();
 }
 
 void

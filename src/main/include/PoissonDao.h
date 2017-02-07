@@ -12,7 +12,9 @@ public:
 
     ~PoissonDao();
 
-    void loadParams(auto &section);
+    void loadParams(std::string name, std::string value);
+
+    //void loadParams(auto &section);
     void print();
 
     int getRadius();
