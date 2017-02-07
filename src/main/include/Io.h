@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MESH_TRIANGULATION_IO_H
+#define MESH_TRIANGULATION_IO_H
+
 #include <string>
 #include <regex>
 #include <iostream>
@@ -107,7 +109,7 @@ private:
 
     int isFolderByName(std::string name, boost::filesystem::path folder);
 
-
-
 };
+
+#endif //MESH_TRIANGULATION_POISSONDAO_H
 

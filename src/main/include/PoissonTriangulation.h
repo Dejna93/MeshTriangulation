@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESH_TRIANGULATION_POISSONTRIANGULATION_H
+#define MESH_TRIANGULATION_POISSONTRIANGULATION_H
 #include <vector>
 #include "include/Triangulation.h"
 #include <pcl/common/common_headers.h>
@@ -34,3 +35,4 @@ public:
     void makeSTLfromClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
     */
 };
+#endif //M

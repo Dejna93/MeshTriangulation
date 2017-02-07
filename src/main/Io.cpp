@@ -7,7 +7,6 @@ Io::Io()
     this->poissonDao = PoissonDao();
 }
 
-
 Io::~Io()
 {
 
@@ -115,6 +114,10 @@ void Io::setParams(std::string filepath) {
                 if (section.first == "poisson") {
                     poissonDao.loadParams(key.first, key.second.get_value<string>());
                 }
+                if (section.first == "options"){
+
+                }
+
             }
     }
     poissonDao.print();

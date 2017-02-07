@@ -12,11 +12,12 @@
 
 class Triangulation
 {
-    /*
+
 public:
     Triangulation();
     ~Triangulation();
 
+/*
   //  virtual pcl::PolygonMesh calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius) = 0 ;
 
     virtual std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> splitCloudToClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) = 0 ;

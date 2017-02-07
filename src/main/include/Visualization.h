@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESH_TRIANGULATION_VISUALIZATION_H
+#define MESH_TRIANGULATION_VISUALIZATION_H
 #include <boost/thread/thread.hpp>
 #include <pcl/io/vtk_io.h>
 #include <pcl/io/vtk_lib_io.h>
@@ -38,3 +39,5 @@ private:
 	unsigned int text_id;
 
 };
+
+#endif //M

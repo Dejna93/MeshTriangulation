@@ -1,3 +1,7 @@
+[options]
+visualization=1
+smoothing=0
+savepcd=0
 [poisson]
 radius=2
 thread_num=4

@@ -56,6 +56,8 @@ void PoissonDao::loadParams(std::string name, std::string value) {
     // print();
 }
 
+
+
 void
 PoissonDao::print() {
     std::cout << "\n Print "
@@ -174,4 +176,42 @@ PoissonDao::setConfidence(int confidence) {
 void
 PoissonDao::setManifold(int manifold) {
     this->manifold = manifold;
+}
+
+std::string PoissonDao::getAttribute(const std::string &name) {
+
+}
+
+void PoissonDao::setAttribute(const std::string &name, std::string value) {
+
+    if(name == "radius"){
+        setRadius( boost::lexical_cast<int>(value));
+    }
+    if (name == "thread_num"){
+        setThreadNum(boost::lexical_cast<int>(value));
+    }
+    if (name == "depth"){
+        setDepth( boost::lexical_cast<int>(value));
+    }
+    if (name == "degree"){
+        setDegree( boost::lexical_cast<int>(value));
+    }
+    if (name == "sample_per_node"){
+        setSamplePerNode( boost::lexical_cast<int>(value));
+    }
+    if ( name  == "output_polygon"){
+        setOutputPolygon(boost::lexical_cast<int>(value));
+    }
+    if (name == "solver_divide"){
+        setSolverDivide(boost::lexical_cast<int>(value));
+    }
+    if (name == "scale"){
+        setScale(boost::lexical_cast<float>(value));
+    }
+    if (name == "confidence"){
+        setConfidence(boost::lexical_cast<bool>(value));
+    }
+    if (name == "manifold"){
+        setManifold(boost::lexical_cast<bool>(value));
+    }
 }

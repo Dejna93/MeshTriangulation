@@ -1,11 +1,13 @@
 //
 // Created by dejna on 06.02.17.
 //
-#ifndef MY_GRAND_PROJECT_POISSONDAO_H
-#define MY_GRAND_PROJECT_POISSONDAO_H
+#ifndef MESH_TRIANGULATION_POISSONDAO_H
+#define MESH_TRIANGULATION_POISSONDAO_H
 
+#include "Dao.h"
 
-class PoissonDao {
+class PoissonDao : protected Dao
+{
 
 public:
     PoissonDao();
@@ -76,7 +78,11 @@ private:
     int output_polygon;
     int solver_divide;
 
+
+    void setAttribute(const std::string & name, std::string value);
+    std::string getAttribute(const std::string & name);
+    int getAttribute(const std::string & name);
 };
 
 
-#endif //MY_GRAND_PROJECT_POISSONDAO_H
+#endif //MESH_TRIANGULATION_POISSONDAO_H
