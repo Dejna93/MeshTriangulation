@@ -5,7 +5,12 @@
 #include "include/OptionDao.h"
 
 OptionDao::OptionDao() {
+}
 
+void OptionDao::INTS::init() {
+    OptionDao::INTS::visualisation = "visualisation";
+    OptionDao::INTS::smoothing = "smoothing";
+    OptionDao::INTS::savepcd = "savepcd";
 }
 
 OptionDao::~OptionDao() {}
@@ -16,37 +21,20 @@ void OptionDao::loadParams(std::string name, std::string value)
 }
 
 
-template<typename T>
-T OptionDao::getAttribute(const std::string &name) {
-    if (name == "visualisation")
-        return  boost::lexical_cast<int>(visualisation);
-    if (name == "smoothing")
-        return   boost::lexical_cast<int>(smoothing);
-    if (name == "savepcd")
-        return  boost::lexical_cast<int>(savepcd);
-    return -1;
-}
-
-void OptionDao::setAttribute(const std::string &name, std::string value) {
-    if (name == "visualisation"){
-        this->visualisation =  boost::lexical_cast<int>(value);
-    }
-    if (name == "smoothing"){
-        this->smoothing =  boost::lexical_cast<int>(value);
-    }
-    if (name == "savepcd"){
-        this->savepcd =  boost::lexical_cast<int>(value);
-    }
-}
-
 void
 OptionDao::print() {
-    std::cout << "\n visualisation=" << visualisation
-              << "\n smoothing=" << smoothing
-              << "\n savepcd=" << savepcd
+    std::cout << "\n visualisation=" << getIntAttribute(OptionDao::INTS::visualisation)
+              << "\n smoothing=" << getIntAttribute(OptionDao::INTS::smoothing)
+              << "\n savepcd=" << getIntAttribute(OptionDao::INTS::savepcd)
               << "\n\n";
 }
 
-int OptionDao::getMethodTriangulation() {
-    return this->smoothing;
+
+
+void OptionDao::setIntAttribute(std::string key, int value)
+{
+    this->intMap.insert(std::make_pair(key,value));
+}
+int OptionDao::getIntAttribute(std::string key) {
+    return this->intMap.at(key);
 }

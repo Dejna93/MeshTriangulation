@@ -24,7 +24,7 @@ void Meshing::setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 void Meshing::run_calculation() {
     std::cout << "running calculation \n";
 
-    if (this->optionDao.getMethodTriangulation() == 0) {
+    if (this->optionDao.getIntAttribute(OptionDao::INTS::smoothing) == 0) {
         //POISSON
         std::cout << " POISSON MESH \n";
         PoissonTriangulation poissonTriangulation = PoissonTriangulation(poissonDao, filteringDao);

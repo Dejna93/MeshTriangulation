@@ -4,8 +4,3 @@
 
 #include "include/Dao.h"
 
-template<typename T>
-T Dao::getAttribute(const std::string &name) {
-    T t;
-    return t;
-}

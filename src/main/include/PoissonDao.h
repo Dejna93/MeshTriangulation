@@ -17,65 +17,33 @@ public:
 
     void loadParams(std::string name, std::string value);
 
+    class INTS{
+        static void init();
+        static std::string radius;
+        static std::string thread_num;
+        static std::string depth;
+        static std::string degree;
+        static std::string sample_per_node;
+
+        static std::string iso_divide;
+        static std::string confidence;
+        static std::string manifold;
+        static std::string output_polygon;
+        static std::string solver_divide;
+        //clustering
+        static std::string iterations;
+        static std::string distance_threshold;
+
+    };
+    class DOUBLES{
+        static void init();
+
+        static std::string cloud_multipler;
+        static std::string scale;
+    };
+
     //void loadParams(auto &section);
     void print();
-
-    int getRadius();
-
-    int getThreadNumber();
-
-    int getDepth();
-
-    int getDegree();
-
-    int getSamplePerNode();
-
-    int getOutputPolygon();
-
-    int getSolverDivide();
-
-    int getIsoDivide();
-
-    float getScale();
-
-    bool getCofidence();
-
-    bool getManifold();
-
-    //set
-    void setRadius(int radius);
-
-    void setDepth(int depth);
-
-    void setDegree(int degree);
-
-    void setThreadNum(int thread_num);
-
-    void setSamplePerNode(float sample_per_node);
-
-    void setIsoDivide(float iso_divide);
-
-    void setOutputPolygon(int output_polygon);
-
-    void setSolverDivide(int solver_divide);
-
-    void setScale(float scale);
-
-    void setConfidence(int confidence);
-
-    void setManifold(int manifold);
-
-    int getIterations() const;
-
-    void setIterations(int iterations);
-
-    int getDistance_threshold() const;
-
-    void setDistance_threshold(int distance_threshold);
-
-    double getCloud_multipler() const;
-
-    void setCloud_multipler(double cloud_multipler);
 
 
 private:
@@ -99,21 +67,16 @@ private:
     // CHANGE ALL TO MAP ->
     std::map<std::string, int> intMap;
     std::map<std::string, double> doubleMap;
-    std::map<std::string, bool> boolMap;
 
-    void setAttribute(const std::string &name, int value);
+    int getType(std::string value);
 
-    void setAttribute(const std::string &name, double value);
+    void seIntAttribute(const std::string &name, int value);
 
-    void setAttribute(const std::string &name, bool value);
-
-    void setAttribute(const std::string & name, std::string value);
+    void setDoubleAttribute(const std::string &name, double value);
 
     int getIntAttribute(const std::string &name);
 
     double getDoubleAttribute(const std::string &name);
-
-    bool getBoolAttribute(const std::string &name);
 
 };
 

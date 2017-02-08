@@ -8,31 +8,37 @@
 #include "Dao.h"
 #include <boost/lexical_cast.hpp>
 #include <iostream>
+#include <map>
 class OptionDao : protected Dao
 {
 public:
     OptionDao();
     ~OptionDao();
 
+    class INTS{
+        public:
+            static void init();
+
+            static std::string visualisation;
+            static std::string smoothing;
+            static std::string savepcd;
+    };
+
+
     //Overide
     void loadParams(std::string name, std::string value) ;
 
-    int getMethodTriangulation();
-
     void print();
 
+    void setIntAttribute(std::string key, int value);
+    int getIntAttribute(std::string key);
 
 private:
-    int visualisation;
-    int smoothing;
-    int savepcd;
+   // int visualisation;
+  //  int smoothing;
+  //  int savepcd;
 
-
-    void setAttribute(const std::string & name, std::string value);
-
-    template<typename T>
-    T getAttribute(const std::string &name);
-
+    std::map<std::string , int> intMap;
 
 
 };
