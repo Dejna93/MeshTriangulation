@@ -5,21 +5,9 @@
 
 #include "include/Visualization.h"
 #include "include/Io.h"
+#include "include/Meshing.h"
 
-#include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/surface/gp3.h>
-
-
-#include <pcl/features/normal_3d_omp.h>
-#include <pcl/surface/mls.h>
-
-
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
 
 
 #include <pcl/surface/concave_hull.h>
@@ -162,12 +150,9 @@ main(int argc, char** argv)
     Io ioManager = Io();
     if (ioManager.input(argc, argv)) {
         ioManager.printStack();
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-        pcl::PCLPointCloud2 cloud_blob;
-        pcl::io::loadPCDFile(ioManager.getFilepath().string(), cloud_blob);
-        pcl::fromPCLPointCloud2(cloud_blob, *cloud);
-        cout << "Writer";
-        ioManager.writeToPCD(cloud, ioManager.getFilepath());
+        Meshing meshCreator = Meshing(ioManager.getOptionDao(), ioManager.getFilterDao(), ioManager.getPoissonDao());
+        meshCreator.setInputCloud(ioManager.loadPCD());
+        meshCreator.run_calculation();
     }
     return 0;
 

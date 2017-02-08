@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(MY_GRAND_PROJECT VERSION 0.1 LANGUAGES CXX)
+project(MESH_TRIANGULATION VERSION 0.1 LANGUAGES CXX)
 
 # Set the output folder where your program will be created
 file(GLOB_RECURSE sources src/main/*.cpp src/main/include/*.h)
@@ -12,7 +12,7 @@ include_directories("${PCL_INCLUDE_DIRS})" "${PROJECT_SOURCE_DIR}")
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-add_executable(mesh ${sources} ${data})
+add_executable(mesh ${sources} ${data} src/main/FilteringDao.cpp src/main/FilteringDao.h)
 
 # just for example add some compiler flags
 target_compile_options(mesh PUBLIC -std=c++1y -Wall -Wfloat-conversion)

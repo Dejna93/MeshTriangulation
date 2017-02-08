@@ -1,10 +1,82 @@
-
 #include "include/PoissonTriangulation.h"
 
+
+PoissonTriangulation::PoissonTriangulation() {
+
+}
+
+PoissonTriangulation::PoissonTriangulation(PoissonDao poissonDao, FilteringDao filteringDao) : Triangulation(
+        filteringDao) {
+    this->poissonDao = poissonDao;
+    this->filteringDao = filteringDao;
+}
+
+PoissonTriangulation::~PoissonTriangulation() {
+
+}
+
+void PoissonTriangulation::division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr copied_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_clusters;
+    pcl::SACSegmentation<pcl::PointXYZ> seg;
+    pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
+    pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_plane(new pcl::PointCloud<pcl::PointXYZ>());
+
+    seg.setOptimizeCoefficients(true);
+    seg.setModelType(pcl::SACMODEL_PLANE);
+    seg.setMethodType(pcl::SAC_RANSAC);
+    //seg.setMaxIterations(100);
+    seg.setMaxIterations(100);
+    seg.setDistanceThreshold(1);
+
+    int i = 0, nr_points = (int) cloud->points.size();
+    while (cloud->points.size() > 1 * nr_points) {
+        // Segment the largest planar component from the remaining cloud
+        seg.setInputCloud(cloud);
+        seg.segment(*inliers, *coefficients);
+        if (inliers->indices.size() == 0) {
+            std::cout << "Could not estimate a planar model for the given dataset." << std::endl;
+            break;
+        }
+        // Extract the planar inliers from the input cloud
+        pcl::ExtractIndices<pcl::PointXYZ> extract;
+        extract.setInputCloud(cloud);
+        extract.setIndices(inliers);
+        extract.setNegative(false);
+
+        extract.filter(*cloud_plane);
+
+        extract.filter(*copied_cloud);
+        *cloud = *copied_cloud;
+    }/*
+    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
+    {
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
+        for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
+            cloud_cluster->points.push_back(cloud->points[*pit]); //
+        cloud_cluster->width = cloud_cluster->points.size();
+        cloud_cluster->height = 1;
+        cloud_cluster->is_dense = true;
+
+        //dodanie clustra do vectora
+        cloud_clusters.push_back(cloud_cluster);
+
+        //calculateMesh
+        //writeSTL
+
+        std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size() << " data points." << std::endl;
+        //writer.write<pcl::PointXYZ>(ss.str(), *cloud_cluster, false); //
+    }*/
+}
+
+
+/*
 PoissonTriangulation::PoissonTriangulation(){}
 
 PoissonTriangulation::~PoissonTriangulation() {}
-/*
+
 pcl::PolygonMesh
 PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius, int thread_num,
                                     int depth           , int degree       , float	samples_per_node , float scale ,

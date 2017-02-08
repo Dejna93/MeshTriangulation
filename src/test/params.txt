@@ -1,5 +1,5 @@
 [options]
-visualization=1
+visualisation=1
 smoothing=0
 savepcd=0
 [poisson]
@@ -14,3 +14,7 @@ confidence=0
 manifold=0
 output_polygon=0
 solver_divide=8
+TODO=NOW
+iterations=100
+distance_threshold=1
+cloud_multipler=1

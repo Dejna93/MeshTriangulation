@@ -4,13 +4,38 @@
 
 Meshing::Meshing()
 {
+}
 
+Meshing::Meshing(OptionDao optionDao, FilteringDao filteringDao, PoissonDao poissonDao) {
+    this->optionDao = optionDao;
+    this->filteringDao = filteringDao;
+    this->poissonDao = poissonDao;
 }
 
 
 Meshing::~Meshing()
 {
 }
+
+void Meshing::setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    this->input_cloud = cloud;
+}
+
+void Meshing::run_calculation() {
+    std::cout << "running calculation \n";
+
+    if (this->optionDao.getMethodTriangulation() == 0) {
+        //POISSON
+        std::cout << " POISSON MESH \n";
+        PoissonTriangulation poissonTriangulation = PoissonTriangulation(poissonDao, filteringDao);
+        poissonTriangulation.noiseRemove(this->input_cloud);
+    }
+
+
+}
+
+
+/*
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr Meshing::calculateSurfaceWithRadius(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius)
 {
@@ -142,3 +167,5 @@ void Meshing::meshPoisson(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radiu
 	poisson.reconstruct(mesh);
 	pcl::io::savePolygonFileSTL("data.stl", mesh);
 }
+*/
+

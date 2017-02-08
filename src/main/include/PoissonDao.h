@@ -5,6 +5,7 @@
 #define MESH_TRIANGULATION_POISSONDAO_H
 
 #include "Dao.h"
+#include <map>
 
 class PoissonDao : protected Dao
 {
@@ -64,6 +65,18 @@ public:
 
     void setManifold(int manifold);
 
+    int getIterations() const;
+
+    void setIterations(int iterations);
+
+    int getDistance_threshold() const;
+
+    void setDistance_threshold(int distance_threshold);
+
+    double getCloud_multipler() const;
+
+    void setCloud_multipler(double cloud_multipler);
+
 
 private:
     int radius;
@@ -77,11 +90,31 @@ private:
     bool manifold;
     int output_polygon;
     int solver_divide;
+    //clustering
+    int iterations;
+    int distance_threshold;
+    double cloud_multipler;
 
+
+    // CHANGE ALL TO MAP ->
+    std::map<std::string, int> intMap;
+    std::map<std::string, double> doubleMap;
+    std::map<std::string, bool> boolMap;
+
+    void setAttribute(const std::string &name, int value);
+
+    void setAttribute(const std::string &name, double value);
+
+    void setAttribute(const std::string &name, bool value);
 
     void setAttribute(const std::string & name, std::string value);
-    std::string getAttribute(const std::string & name);
-    int getAttribute(const std::string & name);
+
+    int getIntAttribute(const std::string &name);
+
+    double getDoubleAttribute(const std::string &name);
+
+    bool getBoolAttribute(const std::string &name);
+
 };
 
 

@@ -20,6 +20,13 @@
 #include <pcl/filters/passthrough.h>
 #include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d_omp.h>
+#include <iostream>
+
+#include "OptionDao.h"
+#include "PoissonDao.h"
+#include "FilteringDao.h"
+
+#include "PoissonTriangulation.h"
 
 using namespace std;
 
@@ -27,16 +34,26 @@ class Meshing
 {
 public:
 	Meshing();
+
+    Meshing(OptionDao optionDao, FilteringDao filteringDao, PoissonDao poissonDao);
 	~Meshing();
 
-	void splitCluster();
+    void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+    void run_calculation();
+
 
 private:
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
 
-	boost::numeric::ublas::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_clusters;
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster;
-	
+    FilteringDao filteringDao;
+    OptionDao optionDao;
+    PoissonDao poissonDao;
+
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud;
+
+    ///refactor down
+    /*
 	pcl::PointCloud<pcl::PointXYZ>::Ptr calculateSurfaceWithRadius(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius = 0.05);
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr filteringCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
@@ -50,6 +67,6 @@ private:
 	void meshPoisson(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius =2);
 	void meshLaplacian(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud , float alpha);
 
-
+    */
 };
 

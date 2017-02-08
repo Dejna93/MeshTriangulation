@@ -111,15 +111,20 @@ void Io::setParams(std::string filepath) {
 
     for (auto &section : propTree) {
             for (auto &key : section.second) {
+                std::string value = key.second.get_value<string>();
                 if (section.first == "poisson") {
-                    poissonDao.loadParams(key.first, key.second.get_value<string>());
+                    poissonDao.loadParams(key.first, value);
                 }
                 if (section.first == "options"){
-
+                    optionDao.loadParams(key.first, value);
+                }
+                if (section.first == "filtering") {
+                    filteringDao.loadParams(key.first, value);
                 }
 
             }
     }
+    optionDao.print();
     poissonDao.print();
 }
 
@@ -274,6 +279,27 @@ void Io::printStack() {
          << "\n Save PCD \t" << save_pcd
          << "\n\n";
     setPointFolder(current_folder);
+}
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr Io::loadPCD() {
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PCLPointCloud2 cloud_blob;
+    pcl::io::loadPCDFile(getFilepath().string(), cloud_blob);
+    pcl::fromPCLPointCloud2(cloud_blob, *cloud);
+    return cloud;
+}
+
+FilteringDao Io::getFilterDao() {
+    return this->filteringDao;
+}
+
+OptionDao Io::getOptionDao() {
+    return this->optionDao;
+}
+
+PoissonDao Io::getPoissonDao() {
+    return this->poissonDao;
 }
 
 

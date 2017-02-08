@@ -10,13 +10,24 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
 
+#include "include/FilteringDao.h"
+
 class Triangulation
 {
 
 public:
     Triangulation();
+
+    Triangulation(FilteringDao filteringDao);
     ~Triangulation();
 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr
+    noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mlt);
+
+protected:
+    FilteringDao filteringDao;
 /*
   //  virtual pcl::PolygonMesh calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius) = 0 ;
 

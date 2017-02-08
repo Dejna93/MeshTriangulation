@@ -7,7 +7,7 @@
 
 #include "Dao.h"
 #include <boost/lexical_cast.hpp>
-
+#include <iostream>
 class OptionDao : protected Dao
 {
 public:
@@ -17,6 +17,11 @@ public:
     //Overide
     void loadParams(std::string name, std::string value) ;
 
+    int getMethodTriangulation();
+
+    void print();
+
+
 private:
     int visualisation;
     int smoothing;
@@ -24,9 +29,11 @@ private:
 
 
     void setAttribute(const std::string & name, std::string value);
-    std::string getAttribute(const std::string & name);
-    int getAttribute(const std::string & name);
-    float getAttribute(const std::string & name);
+
+    template<typename T>
+    T getAttribute(const std::string &name);
+
+
 
 };
 #endif //MY_GRAND_PROJECT_OPTIONDAO_H

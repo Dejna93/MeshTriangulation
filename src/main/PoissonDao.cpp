@@ -178,9 +178,6 @@ PoissonDao::setManifold(int manifold) {
     this->manifold = manifold;
 }
 
-std::string PoissonDao::getAttribute(const std::string &name) {
-
-}
 
 void PoissonDao::setAttribute(const std::string &name, std::string value) {
 
@@ -214,4 +211,53 @@ void PoissonDao::setAttribute(const std::string &name, std::string value) {
     if (name == "manifold"){
         setManifold(boost::lexical_cast<bool>(value));
     }
+}
+
+int PoissonDao::getIterations() const {
+    return iterations;
+}
+
+void PoissonDao::setIterations(int iterations) {
+    PoissonDao::iterations = iterations;
+}
+
+int PoissonDao::getDistance_threshold() const {
+    return distance_threshold;
+}
+
+void PoissonDao::setDistance_threshold(int distance_threshold) {
+    PoissonDao::distance_threshold = distance_threshold;
+}
+
+double PoissonDao::getCloud_multipler() const {
+    return cloud_multipler;
+}
+
+void PoissonDao::setCloud_multipler(double cloud_multipler) {
+    PoissonDao::cloud_multipler = cloud_multipler;
+}
+
+
+void PoissonDao::setAttribute(const std::string &name, int value) {
+    this->intMap[name] = value;
+}
+
+void PoissonDao::setAttribute(const std::string &name, double value) {
+    this->doubleMap[name] = value;
+}
+
+void PoissonDao::setAttribute(const std::string &name, bool value) {
+    this->boolMap[name] = value;
+}
+
+int PoissonDao::getIntAttribute(const std::string &name) {
+    return this->intMap[name];
+}
+
+double PoissonDao::getDoubleAttribute(const std::string &name) {
+    return this->doubleMap[name];
+}
+
+bool PoissonDao::getBoolAttribute(const std::string &name) {
+    return this->boolMap[name];
 }

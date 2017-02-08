@@ -13,11 +13,8 @@ public:
     virtual void loadParams(std::string name, std::string value) = 0;
 
 protected:
-    virtual std::string getAttribute(const std::string & name)  = 0 ;
-
-    virtual int getAttribute(const std::string & name) = 0;
-
-    virtual float getAttribute(const std::string & name) =0;
+    template<typename T>
+    T getAttribute(const std::string &name);
 
     virtual void setAttribute(const std::string & name, std::string value) =0;
 };

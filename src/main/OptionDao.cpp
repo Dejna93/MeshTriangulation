@@ -16,8 +16,8 @@ void OptionDao::loadParams(std::string name, std::string value)
 }
 
 
-
-int OptionDao::getAttribute(const std::string &name) {
+template<typename T>
+T OptionDao::getAttribute(const std::string &name) {
     if (name == "visualisation")
         return  boost::lexical_cast<int>(visualisation);
     if (name == "smoothing")
@@ -37,4 +37,16 @@ void OptionDao::setAttribute(const std::string &name, std::string value) {
     if (name == "savepcd"){
         this->savepcd =  boost::lexical_cast<int>(value);
     }
+}
+
+void
+OptionDao::print() {
+    std::cout << "\n visualisation=" << visualisation
+              << "\n smoothing=" << smoothing
+              << "\n savepcd=" << savepcd
+              << "\n\n";
+}
+
+int OptionDao::getMethodTriangulation() {
+    return this->smoothing;
 }

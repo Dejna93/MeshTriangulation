@@ -1,7 +1,10 @@
 #ifndef MESH_TRIANGULATION_POISSONTRIANGULATION_H
 #define MESH_TRIANGULATION_POISSONTRIANGULATION_H
+
+#include <iostream>
+
 #include <vector>
-#include "include/Triangulation.h"
+
 #include <pcl/common/common_headers.h>
 #include <pcl/point_types.h>
 #include <pcl/PolygonMesh.h>
@@ -17,12 +20,28 @@
 #include <pcl/surface/poisson.h>
 #include <pcl/filters/passthrough.h>
 
+#include "include/Triangulation.h"
+#include "include/PoissonDao.h"
+#include "include/FilteringDao.h"
+
 class PoissonTriangulation : public Triangulation
 {
 public:
     PoissonTriangulation();
 
+    PoissonTriangulation(PoissonDao poissonDao, FilteringDao filteringDao);
+
     ~PoissonTriangulation();
+
+private:
+    PoissonDao poissonDao;
+
+    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_cluster;
+
+    void division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+
+
 /*
     pcl::PolygonMesh PoissonTriangulation::calculateMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius ,
                                                          int thread_num , int depth , int degree,

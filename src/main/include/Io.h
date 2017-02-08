@@ -19,7 +19,8 @@
 
 #include <vector>
 #include "include/PoissonDao.h"
-#include <typeinfo>
+#include "include/OptionDao.h"
+#include "include/FilteringDao.h"
 
 using namespace std;
 
@@ -31,6 +32,14 @@ public:
 	~Io();
 
 	int input(int argc, char **argv);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr loadPCD();
+
+    FilteringDao getFilterDao();
+
+    OptionDao getOptionDao();
+
+    PoissonDao getPoissonDao();
 
 	// SETTERS and GETTERS
 	int setFilepath(std::string filepath);
@@ -68,7 +77,8 @@ public:
 
 private:
     PoissonDao poissonDao;
-
+    OptionDao optionDao;
+    FilteringDao filteringDao;
 	boost::filesystem::path filepath;
     boost::filesystem::path current_folder;
 
