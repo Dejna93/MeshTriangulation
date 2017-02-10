@@ -1,16 +1,11 @@
+
 #include "include/Io.h"
 
 
-
-Io::Io()
-{
-    this->poissonDao = PoissonDao();
+Io::Io() {
+    this->dao = Dao();
 }
 
-Io::~Io()
-{
-
-}
 
 int Io::input(int argc, char **argv) {
 
@@ -20,14 +15,7 @@ int Io::input(int argc, char **argv) {
     if (!parseFilepath(argc, argv)) {
         return 0;
     }
-
-    if (!parseMethodSmoothing(argc, argv)) {
-        return 0;
-    }
     parseParams(argc, argv);
-    parseSavingPCD(argc, argv);
-    parseVisualisation(argc, argv);
-    parseFitlering(argc, argv);
 
 }
 
@@ -59,35 +47,6 @@ int Io::parseParams(int argc, char **argv) {
     return 0;
 }
 
-int Io::parseMethodSmoothing(int argc, char **argv) {
-    int method = 0;
-    if (pcl::console::parse_argument(argc, argv, "-s", method) != -1) {
-        this->setSmoothinMethod(method);
-        return 1;
-    }
-    return 0;
-}
-
-void Io::parseSavingPCD(int argc, char **argv) {
-    if (pcl::console::find_argument(argc, argv, "-t") >= 0) {
-        this->setSavingPcd(1);
-    }
-    this->setSavingPcd();
-}
-
-void Io::parseVisualisation(int argc, char **argv) {
-    if (pcl::console::find_argument(argc, argv, "-v") >= 0) {
-        this->setShowVisualisation(1);
-    }
-    this->setShowVisualisation();
-}
-
-void Io::parseFitlering(int argc, char **argv) {
-    if (pcl::console::find_argument(argc, argv, "-r") >= 0) {
-        this->setFiltering(1);
-    }
-    this->setFiltering();
-}
 
 int Io::setFilepath(std::string filepath) {
     boost::filesystem::path tmp{filepath};
@@ -110,60 +69,34 @@ void Io::setParams(std::string filepath) {
     boost::property_tree::ini_parser::read_ini(filepath, propTree);
 
     for (auto &section : propTree) {
-            for (auto &key : section.second) {
-                std::string value = key.second.get_value<string>();
-                if (section.first == "poisson") {
-                    poissonDao.loadParams(key.first, value);
-                }
-                if (section.first == "options"){
-                    optionDao.loadParams(key.first, value);
-                }
-                if (section.first == "filtering") {
-                    filteringDao.loadParams(key.first, value);
-                }
-
-            }
+        for (auto &key : section.second) {
+            std::string value = key.second.get_value<string>();
+            //if (section.first == "poisson") {
+            std::cout << key.first << " " << value << std::endl;
+            dao.loadParams(key.first, value);
+            //  }
+            //  if (section.first == "options"){
+            //      optionDao.loadParams(key.first, value);
+            //  }
+            //  if (section.first == "filtering") {
+            //       filteringDao.loadParams(key.first, value);
+            //   }
+        }
     }
-    optionDao.print();
-    poissonDao.print();
-}
-
-void Io::setShowVisualisation(int visualisation) {
-    this->show_visualisation = (visualisation != 0);
-}
-
-void Io::setSmoothinMethod(int method) {
-    if (method >= 0 && method <= 2) {
-        this->smoothing_method = method;
-    } else {
-        // default poisson
-        this->smoothing_method = 0;
+    if (dao.getStringAttribute("points") != "") {
+        setPointFolder(dao.getStringAttribute("points"));
     }
+    if (dao.getStringAttribute("stl") != "") {
+        setSTLFolder(dao.getStringAttribute("stl"));
+    }
+
 }
 
-void Io::setSavingPcd(int saving) {
-    this->save_pcd = (saving != 0);
-}
-
-void Io::setFiltering(int filtering) {
-    this->filtering = (filtering != 0);
-}
 
 boost::filesystem::path Io::getFilepath() {
     return filepath;
 }
 
-int Io::getSmoothingMethod() {
-    return this->smoothing_method;
-}
-
-bool Io::isSavePCD() {
-    return this->save_pcd;
-}
-
-bool Io::isFiltering() {
-    return this->filtering;
-}
 
 boost::filesystem::path Io::createFolder(std::string filepath) {
     boost::filesystem::path path(filepath);
@@ -186,14 +119,18 @@ boost::filesystem::path Io::createFolder(boost::filesystem::path filepath) {
 int Io::id_from_file(boost::filesystem::path filepath) {
 
     std::string file = filepath.string();
-    stringstream strStream;
+    std::regex integer("(\\+|-)?[[:digit:]]+");
+    std::smatch output;
 
-    for (auto it = file.rbegin(); it != file.rend(); ++it) {
-        if (isdigit(*it)) {
-            strStream << *it;
-        }
+    std::regex_search(file, output, integer);
+
+    if (output.str() != "") {
+        return boost::lexical_cast<int>(output.str());
     }
-    return boost::lexical_cast<int>(strStream.str());
+
+    // default folder
+    return 0;
+
 }
 
 
@@ -219,18 +156,6 @@ int Io::create_folder(boost::filesystem::path path) {
         return result;
     }
     return 0;
-}
-
-int Io::writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, boost::filesystem::path path) {
-    pcl::PCDWriter writer;
-    boost::filesystem::path created_folder = createFolder(path);
-    writer.write<pcl::PointXYZ>((created_folder /= path.filename()).string(), *cloud, false);
-    return 1;
-}
-
-int Io::writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-
-    return writeToPCD(cloud, this->filepath);
 }
 
 void Io::setPointFolder(boost::filesystem::path filepath) {
@@ -290,21 +215,90 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr Io::loadPCD() {
     return cloud;
 }
 
-FilteringDao Io::getFilterDao() {
-    return this->filteringDao;
+int Io::saveSTL(pcl::PolygonMesh output_mesh) {
+
+    return saveSTL(0, output_mesh);
 }
 
-OptionDao Io::getOptionDao() {
-    return this->optionDao;
+int Io::saveSTL(int index, pcl::PolygonMesh output_mesh) {
+    filesys::path new_stl = this->makePathToNewSTL(this->filepath.string());
+
+    if (new_stl.string() != "") {
+        new_stl /= join(this->filepath.filename(), index) + ".stl";
+
+        return pcl::io::savePolygonFileSTL(new_stl.string(), output_mesh);
+    }
+    return 0;
 }
 
-PoissonDao Io::getPoissonDao() {
-    return this->poissonDao;
+boost::filesystem::path Io::getStlFolder() {
+    return stl_folder;
 }
 
 
-int writeToPCDBinary(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, string filename, int number)
-{
-	pcl::PCDWriter writer;
-	return writer.writeBinary<pcl::PointXYZ>(filename, *cloud); //*
+Dao Io::getDao() {
+    return dao;
+}
+
+void Io::setPointFolder(std::string folder) {
+    filesys::path path(folder);
+    if (filesys::exists(folder) && filesys::is_directory(folder)) {
+        this->point_folder = folder;
+    }
+}
+
+void Io::setSTLFolder(std::string folder) {
+    filesys::path path(folder);
+    if (filesys::exists(folder) && filesys::is_directory(folder)) {
+        this->stl_folder = folder;
+    }
+}
+
+filesys::path Io::makePathToNewPoint(std::string filepath) {
+    filesys::path point_path = this->point_folder;
+
+    point_path /= boost::lexical_cast<std::string>(id_from_file(filepath));
+    create_folder(point_path);
+
+    return point_path;
+}
+
+filesys::path Io::makePathToNewSTL(std::string filepath) {
+    filesys::path stl_path = this->stl_folder;
+
+    stl_path /= boost::lexical_cast<std::string>(id_from_file(filepath));
+    create_folder(stl_path);
+
+    return stl_path;
+}
+
+std::string Io::join(std::string name, int id) {
+    return name + boost::lexical_cast<std::string>(id);
+}
+
+std::string Io::join(filesys::path name, int id) {
+    return name.stem().string() + boost::lexical_cast<std::string>(id);
+}
+
+int Io::savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    return savePCD(cloud, 0);
+}
+
+int Io::savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int index) {
+    filesys::path new_point = this->makePathToNewPoint(this->filepath.string());
+
+    if (new_point.string() != "") {
+        new_point /= join(this->filepath.filename(), index) + ".pcd";
+
+        // return pcl::io::savePolygonFileSTL(new_stl.string(), output_mesh);
+        return pcl::io::savePCDFileASCII(new_point.string(), *cloud);
+    }
+    return 0;
+
+}
+
+
+int writeToPCDBinary(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, string filename, int number) {
+    pcl::PCDWriter writer;
+    return writer.writeBinary<pcl::PointXYZ>(filename, *cloud); //*
 }

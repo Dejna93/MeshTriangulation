@@ -149,8 +149,7 @@ main(int argc, char** argv)
 {
     Io ioManager = Io();
     if (ioManager.input(argc, argv)) {
-        ioManager.printStack();
-        Meshing meshCreator = Meshing(ioManager.getOptionDao(), ioManager.getFilterDao(), ioManager.getPoissonDao());
+        Meshing meshCreator = Meshing(ioManager);
         meshCreator.setInputCloud(ioManager.loadPCD());
         meshCreator.run_calculation();
     }

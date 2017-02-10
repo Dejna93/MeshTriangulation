@@ -1,9 +1,14 @@
+[folders]
+points=/home/dejna/abaqus_plugin/CloudMesh/workspace/project/points/
+stl=/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/
 [options]
 visualisation=1
 smoothing=0
 savepcd=0
 [poisson]
-radius=2
+radius_norm_small=0.05
+radius_norm_norm=0.1
+radius=2.0
 thread_num=4
 depth=9
 degree=5
@@ -17,3 +22,6 @@ iterations=100
 distance_threshold=1
 scale=1.1
 cloud_multipler=1
+cluster_tolerance=2
+min_cluster_size=5
+max_cluster_size=250000

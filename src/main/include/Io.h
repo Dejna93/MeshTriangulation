@@ -17,50 +17,42 @@
 #include <iostream>
 #include <sstream>
 
+#include <pcl/io/vtk_lib_io.h>
 #include <vector>
-#include "include/PoissonDao.h"
-#include "include/OptionDao.h"
-#include "include/FilteringDao.h"
+#include "include/Dao.h"
 
 using namespace std;
+namespace filesys = boost::filesystem;
+
 
 
 class Io
 {
 public:
-	Io();
-	~Io();
+    Io();
 
 	int input(int argc, char **argv);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr loadPCD();
 
-    FilteringDao getFilterDao();
-
-    OptionDao getOptionDao();
-
-    PoissonDao getPoissonDao();
 
 	// SETTERS and GETTERS
 	int setFilepath(std::string filepath);
 
     void setParams(std::string filepath);
 
-	void setShowVisualisation(int visualisation = 0);
+    Dao getDao();
 
-	void setSmoothinMethod(int method = 0);
+    void setPointFolder(std::string folder);
 
-	void setSavingPcd(int saving = 0);
+    void setSTLFolder(std::string folder);
 
-	void setFiltering(int filtering = 0);
 
 	boost::filesystem::path getFilepath();
 
-	int getSmoothingMethod();
 
-	bool isSavePCD();
+    boost::filesystem::path getStlFolder();
 
-	bool isFiltering();
 
     boost::filesystem::path createFolder(std::string filepath);
 
@@ -68,17 +60,21 @@ public:
 
     void printStack();
 
-    int writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, boost::filesystem::path path);
+    int saveSTL(pcl::PolygonMesh output_mesh);
 
-    int writeToPCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+    int saveSTL(int index, pcl::PolygonMesh output_mesh);
 
-    int writeToPCDBinary(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, string filename, int number);
+    int savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+    int savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int index);
+
+    // int writeToPCDBinary(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, string filename, int number);
 
 
+    //dont imlpement
 private:
-    PoissonDao poissonDao;
-    OptionDao optionDao;
-    FilteringDao filteringDao;
+
+    Dao dao;
 	boost::filesystem::path filepath;
     boost::filesystem::path current_folder;
 
@@ -103,21 +99,22 @@ private:
 
     int parseParams(int argc, char **argv);
 
-	int parseMethodSmoothing(int argc, char **argv);
+    filesys::path makePathToNewPoint(std::string filepath);
 
-	//optional arguments
-	void parseSavingPCD(int argc, char **argv);
+    filesys::path makePathToNewSTL(std::string filepath);
 
-	void parseVisualisation(int argc, char **argv);
+    std::string join(std::string name, int id);
 
-	void parseFitlering(int argc, char **argv);
+    std::string join(filesys::path name, int id);
 
 
     int id_from_file(boost::filesystem::path filepath);
 
+
     int create_folder(boost::filesystem::path path);
 
     int isFolderByName(std::string name, boost::filesystem::path folder);
+
 
 };
 

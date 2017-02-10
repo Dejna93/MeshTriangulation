@@ -22,9 +22,7 @@
 #include <pcl/features/normal_3d_omp.h>
 #include <iostream>
 
-#include "OptionDao.h"
-#include "PoissonDao.h"
-#include "FilteringDao.h"
+#include "Dao.h"
 
 #include "PoissonTriangulation.h"
 
@@ -35,7 +33,9 @@ class Meshing
 public:
 	Meshing();
 
-    Meshing(OptionDao optionDao, FilteringDao filteringDao, PoissonDao poissonDao);
+    Meshing(Dao dao);
+
+    Meshing(Io &io);
 	~Meshing();
 
     void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
@@ -45,10 +45,8 @@ public:
 
 private:
 
-    FilteringDao filteringDao;
-    OptionDao optionDao;
-    PoissonDao poissonDao;
-
+    Dao dao;
+    Io io;
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud;
 

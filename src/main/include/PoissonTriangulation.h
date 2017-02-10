@@ -19,26 +19,31 @@
 
 #include <pcl/surface/poisson.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/io/vtk_lib_io.h>
 
 #include "include/Triangulation.h"
-#include "include/PoissonDao.h"
-#include "include/FilteringDao.h"
+#include "include/Dao.h"
+#include <src/main/include/Io.h>
 
 class PoissonTriangulation : public Triangulation
 {
 public:
     PoissonTriangulation();
 
-    PoissonTriangulation(PoissonDao poissonDao, FilteringDao filteringDao);
+    PoissonTriangulation(Dao dao);
 
     ~PoissonTriangulation();
 
-private:
-    PoissonDao poissonDao;
-
-    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_cluster;
+    void proccess(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Io &io);
 
     void division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+private:
+    Dao dao;
+
+    void saveProcesedCloud(Io &io);
+
+    pcl::PolygonMesh smoothingMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
 
 

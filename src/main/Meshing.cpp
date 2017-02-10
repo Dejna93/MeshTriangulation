@@ -6,10 +6,17 @@ Meshing::Meshing()
 {
 }
 
-Meshing::Meshing(OptionDao optionDao, FilteringDao filteringDao, PoissonDao poissonDao) {
-    this->optionDao = optionDao;
-    this->filteringDao = filteringDao;
-    this->poissonDao = poissonDao;
+Meshing::Meshing(Dao dao) {
+    this->dao = dao;
+
+    std::cout << "Meshing" << dao.getIntAttribute("visualisation");
+}
+
+Meshing::Meshing(Io &io) {
+    this->dao = io.getDao();
+    this->io = io;
+
+    std::cout << "Meshing" << dao.getIntAttribute("visualisation");
 }
 
 
@@ -23,12 +30,17 @@ void Meshing::setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 
 void Meshing::run_calculation() {
     std::cout << "running calculation \n";
+    if (this->dao.getIntAttribute("visualisation")) {
 
-    if (this->optionDao.getIntAttribute(OptionDao::INTS::smoothing) == 0) {
+    }
+
+    if (this->dao.getIntAttribute("smoothing") == 0) {
         //POISSON
         std::cout << " POISSON MESH \n";
-        PoissonTriangulation poissonTriangulation = PoissonTriangulation(poissonDao, filteringDao);
-        poissonTriangulation.noiseRemove(this->input_cloud);
+        PoissonTriangulation poissonTriangulation = PoissonTriangulation(dao);
+        //poissonTriangulation.noiseRemove(this->input_cloud);
+        // poissonTriangulation.division_to_clusters(this->input_cloud);
+        poissonTriangulation.proccess(this->input_cloud, this->io);
     }
 
 

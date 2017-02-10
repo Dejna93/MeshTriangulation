@@ -6,22 +6,31 @@
 #define MY_GRAND_PROJECT_DAO_H
 
 #include <string>
-
+#include <map>
+#include <regex>
 class Dao
 {
 public:
-    virtual void loadParams(std::string name, std::string value) = 0;
 
-protected:
+    void loadParams(std::string name, std::string value);
 
-    virtual void setDoubleAttribute(const std::string & name , double value) = 0;
-    virtual void setIntAttribute(const std::string & name, int value) = 0;
-    virtual void setBoolAttribute(const std::string & name, bool value) = 0;
-    virtual void setStringAttribute(const std::string & name, std::string value);
+    void setAttribute(const std::string &name, double value);
 
-    virtual double getDoubleAttribute(const std::string & key) =0 ;
-    virtual int getIntAttribute(const std::string & key) = 0 ;
-    virtual bool  getBoolAttribue(const std::string & key) = 0 ;
-    virtual std::string getStringAttribute(const std::string & key) = 0;
+    void setAttribute(const std::string &name, int value);
+
+    void setAttribute(const std::string &name, std::string value);
+
+    double getDoubleAttribute(const std::string &key);
+
+    int getIntAttribute(const std::string &key);
+
+    std::string getStringAttribute(const std::string &key);
+
+private:
+    int getType(std::string type);
+
+    std::map<std::string, int> intMap;
+    std::map<std::string, double> doubleMap;
+    std::map<std::string, std::string> stringMap;
 };
 #endif //MY_GRAND_PROJECT_DAO_H
