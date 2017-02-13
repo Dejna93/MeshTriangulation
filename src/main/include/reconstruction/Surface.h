@@ -30,7 +30,7 @@ public:
 private:
     Dao dao;
 
-    pcl::PointCloud<pcl::Normal>::Ptr estimatedNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+    pcl::PointCloud<pcl::PointNormal>::Ptr estimatedNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 };
 
 #endif //MESH_TRIANGULATION_SURFACE_H

@@ -2,6 +2,7 @@
 // Created by dejna on 13.02.17.
 //
 
+#include <pcl/features/normal_3d_omp.h>
 #include "include/reconstruction/Surface.h"
 
 
@@ -14,7 +15,7 @@ pcl::PolygonMesh Surface::poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr clo
     pcl::PolygonMesh triangles;
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
 
-    poisson.setInputClout(estimatedNormals(cloud));
+    poisson.setInputCloud(estimatedNormals(cloud));
     poisson.setSearchMethod(tree);
     poisson.setDepth(dao.getIntAttribute("poisson_depth"));
     poisson.setSolverDivide(dao.getIntAttribute("poisson_solver_divide"));
@@ -28,7 +29,7 @@ pcl::PolygonMesh Surface::poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr clo
 }
 
 pcl::PolygonMesh Surface::greedySurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-
+    //types fix
     pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);
     tree2->setInputCloud(estimatedNormals(cloud));
 
@@ -63,7 +64,7 @@ pcl::PolygonMesh Surface::rbfSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) 
     return triangles;
 }
 
-pcl::PointCloud<pcl::Normal>::Ptr Surface::estimatedNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+pcl::PointCloud<pcl::PointNormal>::Ptr Surface::estimatedNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
     ne.setNumberOfThreads((unsigned int) dao.getIntAttribute("thread_num"));
 
@@ -78,6 +79,10 @@ pcl::PointCloud<pcl::Normal>::Ptr Surface::estimatedNormals(pcl::PointCloud<pcl:
         compute3DCentroid(*cloud, centriod);
         ne.setViewPoint(centriod[0], centriod[1], centriod[2]);
     }
+
+    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());
+    ne.compute(*cloud_normals);
+
     if (dao.getBoolAttribute("normal_minus") == 1) {
         for (size_t i = 0; i < cloud_normals->size(); ++i) {
             cloud_normals->points[i].normal_x *= -1;
@@ -85,9 +90,6 @@ pcl::PointCloud<pcl::Normal>::Ptr Surface::estimatedNormals(pcl::PointCloud<pcl:
             cloud_normals->points[i].normal_z *= -1;
         }
     }
-
-    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());
-    ne.compute(*cloud_normals);
 
 
     pcl::PointCloud<pcl::PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<pcl::PointNormal>());
