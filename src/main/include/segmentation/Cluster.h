@@ -5,6 +5,7 @@
 #ifndef MESH_TRIANGULATION_EUCLIDEANCLUSTER_H
 #define MESH_TRIANGULATION_EUCLIDEANCLUSTER_H
 //http://robotica.unileon.es/index.php/PCL/OpenNI_tutorial_2:_Cloud_processing_(basic)
+//http://www.scielo.br/scielo.php?script=sci_arttext&pid=S0104-65002004000100005&lng=en&nrm=iso&tlng=en
 #include <pcl/segmentation/extract_clusters.h>
 
 #include "../Dao.h"
