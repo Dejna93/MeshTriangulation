@@ -2,6 +2,8 @@
 // Created by Damian on 2017-02-13.
 //
 
+#include <pcl/features/normal_3d.h>
+#include <pcl/segmentation/sac_segmentation.h>
 #include "../include/segmentation/Cluster.h"
 
 
@@ -10,7 +12,6 @@ Cluster::Cluster() {
 
 Cluster::Cluster(Dao dao) {
     this->dao = dao;
-    this->input_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 }
 
 Cluster::Cluster(Dao dao, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
@@ -18,8 +19,8 @@ Cluster::Cluster(Dao dao, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     this->input_cloud = cloud;
 }
 
-std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> EuclideanCluster::clusteringEuclides() {
-    return clustering(this->input_cloud);
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringEuclides() {
+    return clusteringEuclides(this->input_cloud);
 }
 
 std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr>
@@ -40,16 +41,18 @@ Cluster::clusteringEuclides(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     std::vector<pcl::PointIndices> clusters;
     clustering.extract(clusters);
 
-    return convertCluster(clusters);
+    return convertCluster(clusters, cloud);
 }
 
-std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringRegion() {
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringRegion() {
     return clusteringRegion(this->input_cloud);
 }
 
-std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringRegion(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringRegion(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     pcl::search::KdTree<pcl::PointXYZ>::Ptr kdtree(new pcl::search::KdTree<pcl::PointXYZ>);
     kdtree->setInputCloud(cloud);
+
+    pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
 
     // Estimate the normals.
     pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normalEstimation;
@@ -76,14 +79,14 @@ std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringRegion(pcl::P
     std::vector<pcl::PointIndices> clusters;
     clustering.extract(clusters);
 
-    return convertCluster(clusters);
+    return convertCluster(clusters, cloud);
 }
 
-std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringPlane() {
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringPlane() {
     return clusteringPlane(this->input_cloud);
 }
 
-std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringPlane(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringPlane(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 // Object for storing the plane model coefficients.
     pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
     // Create the segmentation object.
@@ -103,11 +106,11 @@ std::vector<pc::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringPlane(pcl::Po
 }
 
 std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::convertCluster(
-        std::vector<pcl::PointIndices> indices) {
+        std::vector<pcl::PointIndices> indices, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clusters;
 
-    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();
-         it != cluster_indices.end(); ++it) {
+    for (std::vector<pcl::PointIndices>::const_iterator it = indices.begin();
+         it != indices.end(); ++it) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
         for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
             cloud_cluster->points.push_back(cloud->points[*pit]); //
@@ -115,7 +118,7 @@ std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::convertCluster(
         cloud_cluster->height = 1;
         cloud_cluster->is_dense = true;
 
-        clusters.push_back(cluster);
+        clusters.push_back(cloud_cluster);
     }
     return clusters;
 }

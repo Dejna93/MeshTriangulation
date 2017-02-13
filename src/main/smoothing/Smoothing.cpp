@@ -25,10 +25,9 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr Smoothing::smoothing(pcl::PointCloud<pcl::Po
     //  mls.setDilationVoxelSize();
     mls.setComputeNormals(dao.getBoolAttribute("mls_compute_normals"));
 
-    search::KdTree<PointXYZ>::Ptr tree(new search::KdTree<PointXYZ>());
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
     mls.setSearchMethod(tree);
-
-    mls.process(*cloud_smoothed);
+    // mls.process(*cloud_smoothed);
 
     return cloud_smoothed;
 }

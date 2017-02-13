@@ -13,10 +13,9 @@ Surface::Surface(Dao dao) {
 pcl::PolygonMesh Surface::poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     pcl::Poisson<pcl::PointNormal> poisson;
     pcl::PolygonMesh triangles;
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
 
     poisson.setInputCloud(estimatedNormals(cloud));
-    poisson.setSearchMethod(tree);
+
     poisson.setDepth(dao.getIntAttribute("poisson_depth"));
     poisson.setSolverDivide(dao.getIntAttribute("poisson_solver_divide"));
     poisson.setIsoDivide(dao.getIntAttribute("poisson_iso_divide"));
@@ -33,7 +32,7 @@ pcl::PolygonMesh Surface::greedySurface(pcl::PointCloud<pcl::PointXYZ>::Ptr clou
     pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);
     tree2->setInputCloud(estimatedNormals(cloud));
 
-    pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;
+    pcl::GreedyProjectionTriangulation<pcl::PointXYZ> gp3;
     pcl::PolygonMesh triangles;
 
     // Set the maximum distance between connected points (maximum edge length)
