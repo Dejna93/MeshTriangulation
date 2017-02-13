@@ -1,19 +1,12 @@
 /* \author Geoffrey Biggs */
 
 
-#include <iostream>
-
 #include "include/Visualization.h"
 #include "include/Io.h"
 #include "include/Meshing.h"
 
-#include <pcl/surface/gp3.h>
 
-
-#include <pcl/surface/concave_hull.h>
-#include <pcl/surface/vtk_smoothing/vtk_mesh_smoothing_laplacian.h>
-#include <pcl/surface/vtk_smoothing/vtk_utils.h>
-
+/*
 
 unsigned int text_id = 0;
 void keyboardEventOccurred(const pcl::visualization::KeyboardEvent &event,
@@ -140,7 +133,7 @@ void laplacianMeshSmoothing(const pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud , f
 	vtk.process(output);
 	std::cout << "Done." << std::endl;
 	pcl::io::savePolygonFileSTL("meshsmoothing.stl", output);
-}
+}*/
 // --------------
 // -----Main-----
 // --------------
@@ -149,6 +142,7 @@ main(int argc, char** argv)
 {
     Io ioManager = Io();
     if (ioManager.input(argc, argv)) {
+        //ioManager.getDao().print();
         Meshing meshCreator = Meshing(ioManager);
         meshCreator.setInputCloud(ioManager.loadPCD());
         meshCreator.run_calculation();

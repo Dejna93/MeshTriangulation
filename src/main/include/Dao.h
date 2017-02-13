@@ -2,8 +2,8 @@
 // Created by Damian on 2017-02-07.
 //
 
-#ifndef MY_GRAND_PROJECT_DAO_H
-#define MY_GRAND_PROJECT_DAO_H
+#ifndef DAO_H
+#define DAO_H
 
 #include <string>
 #include <map>
@@ -25,6 +25,10 @@ public:
     int getIntAttribute(const std::string &key);
 
     std::string getStringAttribute(const std::string &key);
+
+    bool getBoolAttribute(const std::string &key);
+
+    void print();
 
 private:
     int getType(std::string type);

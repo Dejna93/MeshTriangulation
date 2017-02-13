@@ -1,5 +1,5 @@
-#ifndef MESH_TRIANGULATION_IO_H
-#define MESH_TRIANGULATION_IO_H
+#ifndef IO_H
+#define IO_H
 
 #include <string>
 #include <regex>
@@ -81,10 +81,7 @@ private:
 
     boost::filesystem::path point_folder;
     boost::filesystem::path stl_folder;
-	bool show_visualisation;
-	int smoothing_method; // 0 - poisson 1 - vtk smoothing 2 - other to impl
-	bool save_pcd;
-	bool filtering;
+
 
     void setPointFolder(boost::filesystem::path filepath);
 

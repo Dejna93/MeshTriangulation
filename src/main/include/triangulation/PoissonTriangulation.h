@@ -1,5 +1,5 @@
-#ifndef MESH_TRIANGULATION_POISSONTRIANGULATION_H
-#define MESH_TRIANGULATION_POISSONTRIANGULATION_H
+#ifndef POISSONTRIANGULATION_H
+#define POISSONTRIANGULATION_H
 
 #include <iostream>
 
@@ -21,7 +21,10 @@
 #include <pcl/filters/passthrough.h>
 #include <pcl/io/vtk_lib_io.h>
 
-#include "include/Triangulation.h"
+#include <boost/thread.hpp>
+
+
+#include "include/triangulation/Triangulation.h"
 #include "include/Dao.h"
 #include <src/main/include/Io.h>
 
@@ -36,7 +39,6 @@ public:
 
     void proccess(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Io &io);
 
-    void division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
 private:
     Dao dao;

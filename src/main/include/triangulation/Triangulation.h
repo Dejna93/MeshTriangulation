@@ -1,4 +1,5 @@
-
+#ifndef TRIANGULATION_H
+#define TRIANGULATION_H
 
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/common/common_headers.h>
@@ -11,6 +12,7 @@
 #include <pcl/segmentation/extract_clusters.h>
 
 #include "include/Dao.h"
+#include "include/Visualization.h"
 
 class Triangulation
 {
@@ -26,12 +28,16 @@ public:
     pcl::PointCloud<pcl::PointXYZ>::Ptr
     noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mlt);
 
+    void division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
 protected:
     Dao dao;
 
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_cluster;
 
     void calculateNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, double radius);
+
+    pcl::PointCloud<pcl::Normal>::Ptr calculateNormal(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, double radius);
 
     void saveClusterFromSegmentation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                                      std::vector<pcl::PointIndices> cluster_indices);
@@ -50,3 +56,5 @@ protected:
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
 */
 };
+
+#endif //M

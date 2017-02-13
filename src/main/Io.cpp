@@ -68,11 +68,13 @@ void Io::setParams(std::string filepath) {
 
     boost::property_tree::ini_parser::read_ini(filepath, propTree);
 
+    std::cout << "LOADER \n";
     for (auto &section : propTree) {
         for (auto &key : section.second) {
+
             std::string value = key.second.get_value<string>();
             //if (section.first == "poisson") {
-            std::cout << key.first << " " << value << std::endl;
+            // std::cout << key.first << " " << value << std::endl;
             dao.loadParams(key.first, value);
             //  }
             //  if (section.first == "options"){
@@ -83,6 +85,8 @@ void Io::setParams(std::string filepath) {
             //   }
         }
     }
+
+
     if (dao.getStringAttribute("points") != "") {
         setPointFolder(dao.getStringAttribute("points"));
     }
@@ -198,10 +202,6 @@ void Io::printStack() {
          << "\n Current folder\t" << current_folder.string()
          << "\n Points folder\t" << point_folder.string()
          << "\n Stl folder\t" << stl_folder.string()
-         << "\n Smooting \t" << smoothing_method
-         << "\n Filtering \t" << filtering
-         << "\n Visualisation \t" << show_visualisation
-         << "\n Save PCD \t" << save_pcd
          << "\n\n";
     setPointFolder(current_folder);
 }
@@ -277,7 +277,7 @@ std::string Io::join(std::string name, int id) {
 }
 
 std::string Io::join(filesys::path name, int id) {
-    return name.stem().string() + boost::lexical_cast<std::string>(id);
+    return name.stem().string() + "_" + boost::lexical_cast<std::string>(id);
 }
 
 int Io::savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
@@ -286,7 +286,7 @@ int Io::savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 
 int Io::savePCD(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int index) {
     filesys::path new_point = this->makePathToNewPoint(this->filepath.string());
-
+    std::cout << new_point.string();
     if (new_point.string() != "") {
         new_point /= join(this->filepath.filename(), index) + ".pcd";
 

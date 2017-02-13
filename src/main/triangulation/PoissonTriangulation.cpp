@@ -1,5 +1,5 @@
 
-#include "include/PoissonTriangulation.h"
+#include "include/triangulation/PoissonTriangulation.h"
 
 
 PoissonTriangulation::PoissonTriangulation() {
@@ -16,53 +16,16 @@ PoissonTriangulation::~PoissonTriangulation() {
 
 }
 
-void PoissonTriangulation::division_to_clusters(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-
-    pcl::PointCloud<pcl::PointXYZ>::Ptr copied_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_clusters;
-    pcl::SACSegmentation<pcl::PointXYZ> seg;
-    pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
-    pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_plane(new pcl::PointCloud<pcl::PointXYZ>());
-
-    seg.setOptimizeCoefficients(true);
-    seg.setModelType(pcl::SACMODEL_PLANE);
-    seg.setMethodType(pcl::SAC_RANSAC);
-    //seg.setMaxIterations(100);
-    seg.setMaxIterations(dao.getIntAttribute("iterations"));
-    seg.setDistanceThreshold(dao.getIntAttribute("distance_threshold"));
-
-    int i = 0, nr_points = (int) cloud->points.size();
-    while (cloud->points.size() > dao.getDoubleAttribute("cloud_multipler") * nr_points) {
-        // Segment the largest planar component from the remaining cloud
-        seg.setInputCloud(cloud);
-        seg.segment(*inliers, *coefficients);
-        if (inliers->indices.size() == 0) {
-            std::cout << "Could not estimate a planar model for the given dataset." << std::endl;
-            break;
-        }
-        // Extract the planar inliers from the input cloud
-        pcl::ExtractIndices<pcl::PointXYZ> extract;
-        extract.setInputCloud(cloud);
-        extract.setIndices(inliers);
-        extract.setNegative(false);
-
-        extract.filter(*cloud_plane);
-
-        extract.filter(*copied_cloud);
-        *cloud = *copied_cloud;
-    }
-    // std::vector<pcl::PointIndices> cluster_indices = euclideanExtraction(cloud);
-    saveClusterFromSegmentation(cloud, euclideanExtraction(cloud));
-
-}
 
 pcl::PolygonMesh PoissonTriangulation::smoothingMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-
+    std::cout << cloud->points.size() << " size\n";
     pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
     ne.setNumberOfThreads((unsigned int) dao.getIntAttribute("thread_num"));
+
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
+    ne.setSearchMethod(tree);
     ne.setInputCloud(cloud);
-    ne.setRadiusSearch(dao.getIntAttribute("radius"));
+    ne.setRadiusSearch(2);
 
     Eigen::Vector4f centriod;
     compute3DCentroid(*cloud, centriod);
@@ -84,26 +47,26 @@ pcl::PolygonMesh PoissonTriangulation::smoothingMesh(pcl::PointCloud<pcl::PointX
     std::cout << "Begin poisson reconstruction \n";
     pcl::Poisson<pcl::PointNormal> poisson;
     //Set the maximum depth of the tree that will be used for surface reconstruction
-    poisson.setDepth(dao.getIntAttribute("depth"));
+    poisson.setDepth(7);
     //Set the degree parameter.
-    poisson.setDegree(dao.getIntAttribute("degree"));
+    // poisson.setDegree(dao.getIntAttribute("degree"));
     //Set the minimum number of sample points that should fall within an octree node as the octree construction is adapted to sampling density.
     //For noise-free samples, small values in the range [1.0 - 5.0] can be used. For more noisy samples, larger values in the range [15.0 - 20.0] may be needed to provide a smoother, noise-reduced, reconstruction.
-    poisson.setSamplesPerNode((float) dao.getDoubleAttribute("samples_per_node"));
+    // poisson.setSamplesPerNode((float) dao.getDoubleAttribute("samples_per_node"));
     //Set the ratio between the diameter of the cube used for reconstruction and the diameter of the samples' bounding cube.
-    poisson.setScale((float) dao.getDoubleAttribute("scale"));
+    //   poisson.setScale((float) dao.getDoubleAttribute("scale"));
     //Set the depth at which a block iso-surface extractor should be used to extract the iso-surface.
-    poisson.setIsoDivide(dao.getIntAttribute("iso_divide"));
+    //   poisson.setIsoDivide(dao.getIntAttribute("iso_divide"));
     //Enabling this flag tells the reconstructor to use the size of the normals as confidence information. When the flag is not enabled, all normals are normalized to have unit-length prior to reconstruction.
-    poisson.setConfidence(dao.getIntAttribute("confidence") != 0);
+    // poisson.setConfidence(dao.getIntAttribute("confidence") != 0);
     //Enabling this flag tells the reconstructor to add the polygon barycenter when triangulating polygons with more than three vertices.
     //Using this parameter helps reduce the memory overhead at the cost of a small increase in extraction time. (In practice, we have found that for reconstructions of depth 9 or higher a subdivide depth of 7 or 8 can greatly reduce the memory usage.)
-    poisson.setManifold(dao.getIntAttribute("manifold") != 0);
+    //  poisson.setManifold(dao.getIntAttribute("manifold") != 0);
     //Enabling this flag tells the reconstructor to output a polygon mesh (rather than triangulating the results of Marching Cubes).
-    poisson.setOutputPolygons(dao.getIntAttribute("output_polygon") != 0);
+    //   poisson.setOutputPolygons(dao.getIntAttribute("output_polygon") != 0);
     //Set the the depth at which a block Gauss-Seidel solver is used to solve the Laplacian equation.
     //For noise-free samples, small values in the range [1.0 - 5.0] can be used. For more noisy samples, larger values in the range [15.0 - 20.0] may be needed to provide a smoother, noise-reduced, reconstruction.
-    poisson.setSolverDivide(dao.getIntAttribute("solver_divide"));
+    //  poisson.setSolverDivide(dao.getIntAttribute("solver_divide"));
 
     poisson.setInputCloud(cloud_smoothed_normals);
 
@@ -116,7 +79,7 @@ pcl::PolygonMesh PoissonTriangulation::smoothingMesh(pcl::PointCloud<pcl::PointX
 
 void PoissonTriangulation::proccess(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Io &io) {
     std::cout << "Calculate stl for clusters \n";
-    this->dao = io.getDao();
+
 
     std::cout << "Calculate normals surface \n";
     calculateNormals(cloud, dao.getDoubleAttribute("radius_norm_small"));
@@ -137,16 +100,29 @@ void PoissonTriangulation::proccess(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, I
 void PoissonTriangulation::saveProcesedCloud(Io &io) {
 
     std::cout << "Calculate stl for clusters \n";
+    std::cout << this->cloud_cluster.size() << "\n";
+
+    //PARALLEL
+
+    //boost::thread_group threadGroup;
+
+    // for (int i=0 ; i < dao.getIntAttribute("thread_num"); i++){
+    //threadGroup.create_thread();
+    //  }
+    //   threadGroup.join_all();
 
     for (auto it = this->cloud_cluster.begin();
          it != cloud_cluster.end(); ++it)//(pcl::PointCloud<pcl::PointXYZ>::Ptr cluster : this->cloud_cluster)
     {
         auto index = std::distance(cloud_cluster.begin(), it);
-
-        if (dao.getIntAttribute("savepcd")) {
+        std::cout << "Cloud number " << index << std::endl;
+        if (io.getDao().getIntAttribute("savepcd") == 1) {
             //SavePCD
             io.savePCD(*it, index);
+
         }
+
+        std::cout << "Smoothing \n";
 
         pcl::PolygonMesh output_mesh = smoothingMesh(*it);
 

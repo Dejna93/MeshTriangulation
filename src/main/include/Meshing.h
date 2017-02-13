@@ -1,4 +1,7 @@
-#pragma once
+
+#ifndef MESHING_H
+#define MESHING_H
+
 #include <pcl/features/normal_3d.h>
 #include <pcl/common/common_headers.h>
 #include <pcl/io/vtk_lib_io.h>
@@ -24,7 +27,10 @@
 
 #include "Dao.h"
 
-#include "PoissonTriangulation.h"
+#include "triangulation/PoissonTriangulation.h"
+#include "triangulation/LaplacianTriangulation.h"
+#include "triangulation/GreedyTriangulation.h"
+#include "Visualization.h"
 
 using namespace std;
 
@@ -68,3 +74,4 @@ private:
     */
 };
 
+#endif //M

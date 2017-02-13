@@ -29,9 +29,13 @@ void Meshing::setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 }
 
 void Meshing::run_calculation() {
-    std::cout << "running calculation \n";
-    if (this->dao.getIntAttribute("visualisation")) {
+    std::cout << "running calculation \n" << this->dao.getIntAttribute("visualisation") << std::endl;
+    dao.print();
 
+    if (dao.getIntAttribute("visualisation") == 1) {
+        std::cout << "Visualization \n";
+        Visualization visualization = Visualization();
+        visualization.view_visaulization(visualization.simpleVis(this->input_cloud));
     }
 
     if (this->dao.getIntAttribute("smoothing") == 0) {
@@ -41,6 +45,17 @@ void Meshing::run_calculation() {
         //poissonTriangulation.noiseRemove(this->input_cloud);
         // poissonTriangulation.division_to_clusters(this->input_cloud);
         poissonTriangulation.proccess(this->input_cloud, this->io);
+    }
+    if (this->dao.getIntAttribute("smoothing") == 1) {
+        LaplacianTriangulation laplacianTriangulation = LaplacianTriangulation(dao);
+
+        laplacianTriangulation.process(this->input_cloud, this->io);
+    }
+    if (this->dao.getIntAttribute("smoothing") == 2) {
+        std::cout << "Greedy Triangulation \n";
+        GreedyTriangulation greedyTriangulation = GreedyTriangulation();
+
+        greedyTriangulation.process(this->input_cloud, this->io);
     }
 
 
