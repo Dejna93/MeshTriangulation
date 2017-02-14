@@ -207,10 +207,18 @@ void Io::printStack() {
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr Io::loadPCD() {
+    return loadPCD(this->getFilepath());
+}
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr Io::loadPCD(boost::filesystem::path filepath) {
+    return loadPCD(filepath.string());
+}
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr Io::loadPCD(std::string filepath) {
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PCLPointCloud2 cloud_blob;
-    pcl::io::loadPCDFile(getFilepath().string(), cloud_blob);
+    pcl::io::loadPCDFile(filepath, cloud_blob);
     pcl::fromPCLPointCloud2(cloud_blob, *cloud);
     return cloud;
 }

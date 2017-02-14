@@ -10,7 +10,9 @@
 #include <regex>
 class Dao
 {
+
 public:
+
 
     void loadParams(std::string name, std::string value);
 

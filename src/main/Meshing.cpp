@@ -6,11 +6,18 @@ Meshing::Meshing()
 {
 }
 
+
+Meshing::Meshing(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) : input_cloud(cloud) {
+
+}
+
+
 Meshing::Meshing(Dao dao) {
     this->dao = dao;
 
     std::cout << "Meshing" << dao.getIntAttribute("visualisation");
 }
+
 
 Meshing::Meshing(Io &io) {
     this->dao = io.getDao();
@@ -27,6 +34,12 @@ Meshing::~Meshing()
 void Meshing::setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     this->input_cloud = cloud;
 }
+
+void Meshing::setDao(Dao dao) {
+    this->dao = dao;
+}
+
+
 
 void Meshing::run_calculation() {
     std::cout << "running calculation \n" << this->dao.getIntAttribute("visualisation") << std::endl;
@@ -60,6 +73,11 @@ void Meshing::run_calculation() {
 
 
 }
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr Meshing::getCloud() {
+    return input_cloud;
+}
+
 
 
 /*

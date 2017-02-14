@@ -33,6 +33,9 @@ public:
 
 	int input(int argc, char **argv);
 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr loadPCD(std::string filepath);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr loadPCD(boost::filesystem::path filepath);
     pcl::PointCloud<pcl::PointXYZ>::Ptr loadPCD();
 
 

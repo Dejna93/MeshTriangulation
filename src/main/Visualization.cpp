@@ -31,6 +31,7 @@ Visualization::simpleVis(pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud)
 	viewer->setBackgroundColor(0, 0, 0);
 	viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
 	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+	viewer->addText("CLOUD TEST", 10, 10);
 	viewer->addCoordinateSystem(1.0);
 	viewer->initCameraParameters();
 	return viewer;
@@ -167,4 +168,46 @@ void Visualization::view_mesh(const pcl::PolygonMesh &mesh) {
         boost::this_thread::sleep(boost::posix_time::microseconds(100000));
     }
 
+}
+
+
+void Visualization::view(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds) {
+
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer = normalVis(clouds);
+	while (!viewer->wasStopped()) {
+		viewer->spinOnce(100);
+		boost::this_thread::sleep(boost::posix_time::microseconds(10000));
+	}
+}
+
+
+boost::shared_ptr<pcl::visualization::PCLVisualizer>
+Visualization::normalVis(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds) {
+
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	viewer->setBackgroundColor(0, 0, 0);
+	viewer->setSize(640, 480);
+
+	//viewer->addCoordinateSystem(1.0);
+	viewer->addText("Clouds loaded", 10, 470);
+	int index = 1;
+	int ypoz = 465;
+	for (pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud : clouds) {
+
+		pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> single_color(cloud, 0, 255, 0);
+		viewer->addPointCloud(cloud, single_color, "sample cloud");
+		std::string text = "Cloud nr=" + std::to_string(index) + ",size=" + std::to_string(cloud->size());
+		viewer->addText(text, 10, ypoz -= 10);
+		index++;
+	}
+	//viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 10, "sample cloud");
+
+	viewer->addCoordinateSystem(1.0);
+	viewer->initCameraParameters();
+	return viewer;
+}
+
+void Visualization::view(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+	view(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> {cloud});
 }

@@ -14,7 +14,12 @@ public:
 
 	void view_visaulization(const boost::shared_ptr<pcl::visualization::PCLVisualizer> & viewer);
 
+	void view(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds);
+
+	void view(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 	void view_mesh(const pcl::PolygonMesh &mesh);
+
+
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> simpleVis(pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud);
 
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> rgbVis(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud);
@@ -37,6 +42,9 @@ private:
 	void mouseEventOccurred(const pcl::visualization::MouseEvent &event, void* viewer_void);
 
 	unsigned int text_id;
+
+	boost::shared_ptr<pcl::visualization::PCLVisualizer>
+	normalVis(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds);
 
 };
 

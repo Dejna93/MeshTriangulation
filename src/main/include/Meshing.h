@@ -41,12 +41,18 @@ public:
 
     Meshing(Dao dao);
 
+	Meshing(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
     Meshing(Io &io);
 	~Meshing();
+
+	void setDao(Dao dao);
 
     void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
     void run_calculation();
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr getCloud();
 
 
 private:
@@ -56,22 +62,7 @@ private:
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud;
 
-    ///refactor down
-    /*
-	pcl::PointCloud<pcl::PointXYZ>::Ptr calculateSurfaceWithRadius(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius = 0.05);
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr filteringCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
-
-	pcl::SACSegmentation<pcl::PointXYZ> * initSegmentation(bool optimaze=true, int num_iteration = 100, int distance_threshold=1 );
-	pcl::PointCloud<pcl::PointXYZ>::Ptr extractIndices(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, double iteration_multipler = 1);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int k=50);
-
-	pcl::PointCloud<pcl::Normal>::Ptr computeNormals(pcl::PointCloud<pcl::Normal>::Ptr cloud_normals);
-
-	void meshPoisson(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius =2);
-	void meshLaplacian(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud , float alpha);
-
-    */
 };
 
 #endif //M
