@@ -6,7 +6,9 @@
 #define MESH_TRIANGULATION_UPSAMPLING_H
 
 #include <pcl/surface/mls.h>
-
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
+#include <pcl/kdtree/kdtree_flann.h>
 #include "../Dao.h"
 
 class Upsampling {

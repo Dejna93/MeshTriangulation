@@ -25,11 +25,15 @@ bool App::isValid() const {
 int App::run() {
     meshing = Meshing(io->loadPCD());
     meshing.setDao(io->getDao());
+    meshing.setIo(io);
+
+
 
     if (io->getDao().getBoolAttribute("show_loaded")) {
         Visualization visualization = Visualization();
         visualization.view(meshing.getCloud());
     }
+    meshing.run_calculation();
 
     // std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> test;
     // for (int i=0 ; i <3 ; i++){

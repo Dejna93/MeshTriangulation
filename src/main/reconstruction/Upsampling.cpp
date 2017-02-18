@@ -2,6 +2,7 @@
 // Created by dejna on 13.02.17.
 //
 
+#include <src/main/include/Visualization.h>
 #include "include/reconstruction/Upsampling.h"
 
 Upsampling::Upsampling(Dao dao) {
@@ -9,22 +10,18 @@ Upsampling::Upsampling(Dao dao) {
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr Upsampling::process(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    std::cout << "\nBefore upsampling" << cloud->points.size();
     pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> filter;
     filter.setInputCloud(cloud);
-    // Object for searching.
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr kdtree;
-    filter.setSearchMethod(kdtree);
-    // Use all neighbors in a radius of 3cm
-    filter.setSearchRadius(dao.getDoubleAttribute("up_search_radius")); //0.03 - 3 cm
-    // Upsampling method. Other possibilites are DISTINCT_CLOUD, RANDOM_UNIFORM_DENSITY
-    // and VOXEL_GRID_DILATION. NONE disables upsampling. Check the API for details.
+    filter.setSearchRadius(1.1);
+    // filter.setPolynomialFit(true);
+    //filter.setPolynomialOrder(2);
     filter.setUpsamplingMethod(pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
-    // Radius around each point, where the local plane will be sampled.
-    filter.setUpsamplingRadius(dao.getDoubleAttribute("up_sampling_radius"));
-    // Sampling step size. Bigger values will yield less (if any) new points.
-    filter.setUpsamplingStepSize(dao.getDoubleAttribute("up_sampling_step"));
+    filter.setUpsamplingRadius(2);
+    filter.setUpsamplingStepSize(2);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_smoothed(new pcl::PointCloud<pcl::PointXYZ>());
+    filter.process(*cloud_smoothed);
+    std::cout << "\nupsampling" << cloud_smoothed->points.size();
 
-    filter.process(*cloud);
-
-    return cloud;
+    return cloud_smoothed;
 }

@@ -12,6 +12,8 @@
 #include <pcl/surface/poisson.h>
 #include <pcl/surface/marching_cubes_rbf.h>
 
+#include <vtkPoints.h>
+
 #include "../Dao.h"
 
 class Surface {
@@ -27,10 +29,15 @@ public:
 
     pcl::PolygonMesh greedySurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
+    pcl::PolygonMesh laplacianSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
 private:
     Dao dao;
 
     pcl::PointCloud<pcl::PointNormal>::Ptr estimatedNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+    boost::shared_ptr<pcl::PolygonMesh>
+    computeConcaveHull(const pcl::PointCloud<pcl::PointXYZ>::Ptr &input, float alpha);
 };
 
 #endif //MESH_TRIANGULATION_SURFACE_H

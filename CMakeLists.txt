@@ -11,8 +11,11 @@ file(GLOB_RECURSE sources_test src/test/*.cpp)
 file(GLOB_RECURSE data resources/*)
 
 
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
 find_package(PCL REQUIRED)
 include_directories("${PCL_INCLUDE_DIRS})" "${PROJECT_SOURCE_DIR}")
+
 
 
 link_directories(${PCL_LIBRARY_DIRS})
@@ -28,4 +31,4 @@ target_include_directories(mesh PUBLIC src/main)
 file(COPY ${data} DESTINATION resources)
 
 
-target_link_libraries(mesh ${PCL_LIBRARIES})
+target_link_libraries(mesh ${PCL_LIBRARIES} ${VTK_LIBRARIES})

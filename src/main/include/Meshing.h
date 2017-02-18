@@ -7,29 +7,16 @@
 #include <pcl/io/vtk_lib_io.h>
 #include <pcl/io/vtk_io.h>
 #include <pcl/io/pcd_io.h>
-#include <boost/numeric/ublas/vector.hpp>
 
-
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
-
-#include <pcl/filters/statistical_outlier_removal.h>
-
-#include <pcl/surface/poisson.h>
-#include <pcl/filters/passthrough.h>
-#include <pcl/surface/mls.h>
-#include <pcl/features/normal_3d_omp.h>
 #include <iostream>
 
-#include "Dao.h"
 
-#include "triangulation/PoissonTriangulation.h"
-#include "triangulation/LaplacianTriangulation.h"
-#include "triangulation/GreedyTriangulation.h"
+#include "Dao.h"
+#include "include/segmentation/Cluster.h"
+#include "include/reconstruction/Upsampling.h"
+#include "include/reconstruction/Surface.h"
+
+#include "include/Io.h"
 #include "Visualization.h"
 
 using namespace std;
@@ -43,10 +30,11 @@ public:
 
 	Meshing(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
-    Meshing(Io &io);
 	~Meshing();
 
 	void setDao(Dao dao);
+
+    void setIo(Io *io);
 
     void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
@@ -58,9 +46,17 @@ public:
 private:
 
     Dao dao;
-    Io io;
+    Io *io;
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud;
+    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clustered_cloud;
+
+    bool isClusteredCloud();
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr
+    noiseRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int nr_k, double stddev_mlt);
 
 
 };

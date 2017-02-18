@@ -15,7 +15,7 @@ int Io::input(int argc, char **argv) {
     if (!parseFilepath(argc, argv)) {
         return 0;
     }
-    parseParams(argc, argv);
+    return parseParams(argc, argv);
 
 }
 
@@ -233,9 +233,10 @@ int Io::saveSTL(int index, pcl::PolygonMesh output_mesh) {
 
     if (new_stl.string() != "") {
         new_stl /= join(this->filepath.filename(), index) + ".stl";
-
+        std::cout << "Saving to " << new_stl.string() << "\n";
         return pcl::io::savePolygonFileSTL(new_stl.string(), output_mesh);
     }
+    std::cout << "Eror saving\n";
     return 0;
 }
 

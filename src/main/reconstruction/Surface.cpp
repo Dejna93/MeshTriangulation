@@ -3,6 +3,9 @@
 //
 
 #include <pcl/features/normal_3d_omp.h>
+#include <src/main/include/Visualization.h>
+#include <pcl/surface/vtk_smoothing/vtk_mesh_smoothing_laplacian.h>
+#include <pcl/surface/concave_hull.h>
 #include "include/reconstruction/Surface.h"
 
 
@@ -57,10 +60,15 @@ pcl::PolygonMesh Surface::greedySurface(pcl::PointCloud<pcl::PointXYZ>::Ptr clou
 pcl::PolygonMesh Surface::rbfSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     pcl::MarchingCubesRBF<pcl::PointNormal> mc;
     pcl::PolygonMesh triangles;
-
+    Visualization vis;
+    mc.setIsoLevel(0);
+    //mc.setGridResolution();
+    mc.setPercentageExtendGrid(50);
+    pcl::PointCloud<pcl::PointNormal>::Ptr test = estimatedNormals(cloud);
+    //vis.view(test);
     mc.setInputCloud(estimatedNormals(cloud));
     mc.reconstruct(triangles);
-
+    std::cout << triangles.polygons.size() << "\n";
     return triangles;
 }
 
@@ -94,6 +102,37 @@ pcl::PointCloud<pcl::PointNormal>::Ptr Surface::estimatedNormals(pcl::PointCloud
 
     pcl::PointCloud<pcl::PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<pcl::PointNormal>());
     concatenateFields(*cloud, *cloud_normals, *cloud_smoothed_normals);
-
     return cloud_smoothed_normals;
+}
+
+pcl::PolygonMesh Surface::laplacianSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+
+    std::cout << "Begin Concave Hull Reconstruction...";
+    boost::shared_ptr<pcl::PolygonMesh> meshIn = computeConcaveHull(cloud, 1.0);
+    std::cout << "Done." << std::endl;
+
+    std::cout << "Begin Laplacian VTKSmoothing...";
+    pcl::PolygonMesh output;
+    pcl::MeshSmoothingLaplacianVTK vtk;
+    vtk.setInputMesh(meshIn);
+    vtk.setNumIter(400000);
+    vtk.setConvergence(0.0001);
+    vtk.setRelaxationFactor(0.5);
+    vtk.setFeatureEdgeSmoothing(true);
+    vtk.setFeatureAngle(M_PI / 4);
+    vtk.setBoundarySmoothing(true);
+    vtk.process(output);
+
+    return output;
+}
+
+boost::shared_ptr<pcl::PolygonMesh>
+Surface::computeConcaveHull(const pcl::PointCloud<pcl::PointXYZ>::Ptr &input, float alpha) {
+
+    pcl::ConcaveHull<pcl::PointXYZ> concave_hull;
+    concave_hull.setInputCloud(input);
+    concave_hull.setAlpha(alpha);
+    boost::shared_ptr<pcl::PolygonMesh> output(new pcl::PolygonMesh);
+    concave_hull.reconstruct(*output);
+    return (output);
 }
