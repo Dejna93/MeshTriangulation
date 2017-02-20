@@ -83,7 +83,7 @@ void Meshing::run_calculation() {
             switch (dao.getIntAttribute("type_triangulation")) {
                 case 0: {
                     {
-                        std::cout << "Laplacian VTK triangulation\n";
+                        std::cout << "\nLaplacian VTK triangulation\n";
                         // std::string lap ="/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/" + std::to_string(i) +"lap.stl";
                         //pcl::io::savePolygonFileSTL(lap, surface.laplacianSurface(cloud));
                         io->saveSTL(i, surface.laplacianSurface(cloud));

@@ -4,6 +4,7 @@
 #include <string>
 #include <regex>
 #include <iostream>
+#include <fstream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/vtk_io.h>
 
@@ -114,6 +115,8 @@ private:
     int create_folder(boost::filesystem::path path);
 
     int isFolderByName(std::string name, boost::filesystem::path folder);
+
+    int save_to_log(std::string log_file, std::string log);
 
 
 };

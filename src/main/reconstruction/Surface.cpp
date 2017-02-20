@@ -79,7 +79,7 @@ pcl::PointCloud<pcl::PointNormal>::Ptr Surface::estimatedNormals(pcl::PointCloud
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
     ne.setSearchMethod(tree);
     ne.setInputCloud(cloud);
-    ne.setRadiusSearch(dao.getDoubleAttribute("poisson_radius"));
+    ne.setRadiusSearch(dao.getDoubleAttribute("normal_radius"));
     ne.setKSearch(dao.getIntAttribute("normal_k"));
 
     if (dao.getBoolAttribute("normal_centroid") == 1) {
@@ -115,12 +115,12 @@ pcl::PolygonMesh Surface::laplacianSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr c
     pcl::PolygonMesh output;
     pcl::MeshSmoothingLaplacianVTK vtk;
     vtk.setInputMesh(meshIn);
-    vtk.setNumIter(400000);
-    vtk.setConvergence(0.0001);
-    vtk.setRelaxationFactor(0.5);
-    vtk.setFeatureEdgeSmoothing(true);
+    vtk.setNumIter(dao.getIntAttribute("lap_max_iter"));
+    vtk.setConvergence(dao.getDoubleAttribute("lap_convergence"));
+    vtk.setRelaxationFactor(dao.getDoubleAttribute("lap_relaxation_factor"));
+    vtk.setFeatureEdgeSmoothing(dao.getBoolAttribute("lap_edge_smoothing"));
     vtk.setFeatureAngle(M_PI / 4);
-    vtk.setBoundarySmoothing(true);
+    vtk.setBoundarySmoothing(dao.getBoolAttribute("lap_boundary_smoothing"));
     vtk.process(output);
 
     return output;

@@ -234,10 +234,24 @@ int Io::saveSTL(int index, pcl::PolygonMesh output_mesh) {
     if (new_stl.string() != "") {
         new_stl /= join(this->filepath.filename(), index) + ".stl";
         std::cout << "Saving to " << new_stl.string() << "\n";
+        filesys::path log = this->stl_folder;
+        log /= "output.log";
+        save_to_log(log.string(), new_stl.string());
         return pcl::io::savePolygonFileSTL(new_stl.string(), output_mesh);
     }
     std::cout << "Eror saving\n";
     return 0;
+}
+
+int Io::save_to_log(std::string log_file, std::string log) {
+    std::cout << log_file << " " << log << "\n";
+    ofstream file;
+    file.open(log_file, ios::out | ios::app);
+    if (file.is_open()) {
+        file << log << "\n";
+    }
+    file.close();
+    return 1;
 }
 
 boost::filesystem::path Io::getStlFolder() {
