@@ -27,7 +27,6 @@ pcl::PolygonMesh Surface::poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr clo
     poisson.setConfidence(dao.getBoolAttribute("poisson_confidence"));
 
     poisson.reconstruct(triangles);
-
     return triangles;
 }
 

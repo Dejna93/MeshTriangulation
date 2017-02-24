@@ -3,7 +3,8 @@ points=/home/dejna/abaqus_plugin/CloudMesh/workspace/project/points/
 stl=/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/
 [option]
 show_loaded=0
-show_clustered=0
+show_clustered=1
+show_mesh=1
 type_triangulation=0
 visualisation=0
 savepcd=1
@@ -24,7 +25,7 @@ mls_dilation_iter=2
 mls_dilation_voxel=0.01
 mls_compute_normals=0
 [clustering]
-cluster_type=5
+cluster_type=0
 [cluster]
 euc_cluster_tolerance=2.0
 euc_min_cluster_size=25

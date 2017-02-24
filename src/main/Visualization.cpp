@@ -163,6 +163,10 @@ Visualization::mouseEventOccurred(const pcl::visualization::MouseEvent &event, v
 void Visualization::view_mesh(const pcl::PolygonMesh &mesh) {
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
     viewer->setBackgroundColor(0, 0, 0);
+    viewer->setSize(800, 600);
+    viewer->addCoordinateSystem(1.0);
+    viewer->setCameraPosition(150, 100, 100, -0.6, 0.8, 0.1, 0.9, -0.3, -0.3);
+
     viewer->addPolygonMesh(mesh, "meshes", 0);
     viewer->addCoordinateSystem(1.0);
     viewer->initCameraParameters();
@@ -185,6 +189,25 @@ void Visualization::view_mesh(const pcl::PolygonMesh::Ptr &mesh) {
     }
 
 }
+
+void Visualization::view_mesh(std::vector<pcl::PolygonMesh> &meshes) {
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+    viewer->initCameraParameters();
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->addCoordinateSystem(1.0, "axis", 0);
+
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->setSize(800, 600);
+    viewer->setCameraPosition(150, 100, 100, -0.6, 0.8, 0.1, 0.9, -0.3, -0.3);
+    for (size_t i = 0; i < meshes.size(); ++i) {
+        viewer->addPolygonMesh(meshes[i], std::to_string(i));
+    }
+    while (!viewer->wasStopped()) {
+        viewer->spinOnce(100);
+        boost::this_thread::sleep(boost::posix_time::microseconds(100000));
+    }
+}
+
 
 void Visualization::view(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds) {
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer = normalVis(clouds);
@@ -249,4 +272,5 @@ Visualization::normalVis(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds
 void Visualization::view(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 	view(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> {cloud});
 }
+
 

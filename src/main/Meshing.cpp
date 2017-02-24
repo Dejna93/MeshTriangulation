@@ -77,6 +77,7 @@ void Meshing::run_calculation() {
     if (!this->clustered_cloud.empty()) {
         std::cout << "Start making STL from cluster.\n";
         Upsampling upsampling = Upsampling(dao);
+        std::vector<pcl::PolygonMesh> meshes;
         for (size_t i = 0; i < this->clustered_cloud.size(); ++i) {
             std::cout << "\nCloud nr " << i << " computing\n";
             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = noiseRemove(clustered_cloud[i]);
@@ -89,7 +90,10 @@ void Meshing::run_calculation() {
                         std::cout << "\nLaplacian VTK triangulation\n";
                         // std::string lap ="/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/" + std::to_string(i) +"lap.stl";
                         //pcl::io::savePolygonFileSTL(lap, surface.laplacianSurface(cloud));
-                        io->saveSTL(i, surface.laplacianSurface(cloud));
+                        pcl::PolygonMesh mesh = surface.laplacianSurface(cloud);
+                        meshes.push_back(mesh);
+
+                        io->saveSTL(i, mesh);
                         break;
                     }
                 }
@@ -97,20 +101,29 @@ void Meshing::run_calculation() {
                 case 1: {
                     //  std::string poisson = "/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/" + std::to_string(i) +"poisson.stl";
                     //pcl::io::savePolygonFileSTL(poisson, surface.poissonSurface(cloud));
-                    io->saveSTL(i, surface.poissonSurface(cloud));
+                    pcl::PolygonMesh mesh = surface.poissonSurface(cloud);
+                    meshes.push_back(mesh);
+                    io->saveSTL(i, mesh);
                     break;
                 }
 
                 case 2: {
                     // std::string gredy ="/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/"+std::to_string(i)+"greedy.stl";
                     //  pcl::io::savePolygonFileSTL(gredy,surface.greedySurface(cloud));
-                    io->saveSTL(i, surface.greedySurface(cloud));
+                    pcl::PolygonMesh mesh = surface.greedySurface(cloud);
+                    meshes.push_back(mesh);
+                    io->saveSTL(i, mesh);
                     break;
                 }
                 default:
                     std::cerr << "Error set param [type_triangulation]\n";
                     return;
             }
+        }
+
+        if (dao.getIntAttribute("show_mesh")) {
+            Visualization vis = Visualization();
+            vis.view_mesh(meshes);
         }
     }
 }

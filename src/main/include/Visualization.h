@@ -23,6 +23,7 @@ public:
 
     void view_mesh(const pcl::PolygonMesh::Ptr &mesh);
 
+    void view_mesh(std::vector<pcl::PolygonMesh> &meshes);
 
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> simpleVis(pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud);
 
