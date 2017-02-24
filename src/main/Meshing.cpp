@@ -53,9 +53,12 @@ void Meshing::run_calculation() {
             std::cout << "Plane clustering \n";
             clustered_cloud = clustering.clusteringPlane(input_cloud);
             break;
+        case 3:
+            clustered_cloud = clustering.clustering(input_cloud);
+            break;
         default:
-            std::cout << "Error wrong [cluster_type]\n";
-            return;
+            std::cout << "Error wrong [cluster_type], converting whole point cloud\n";
+            break;
     }
 
     if (!isClusteredCloud()) {
@@ -94,19 +97,18 @@ void Meshing::run_calculation() {
                 case 1: {
                     //  std::string poisson = "/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/" + std::to_string(i) +"poisson.stl";
                     //pcl::io::savePolygonFileSTL(poisson, surface.poissonSurface(cloud));
-                    io->saveSTL(i, surface.laplacianSurface(cloud));
+                    io->saveSTL(i, surface.poissonSurface(cloud));
                     break;
                 }
 
                 case 2: {
                     // std::string gredy ="/home/dejna/abaqus_plugin/CloudMesh/workspace/project/stl/"+std::to_string(i)+"greedy.stl";
                     //  pcl::io::savePolygonFileSTL(gredy,surface.greedySurface(cloud));
-                    io->saveSTL(i, surface.laplacianSurface(cloud));
+                    io->saveSTL(i, surface.greedySurface(cloud));
                     break;
                 }
                 default:
                     std::cerr << "Error set param [type_triangulation]\n";
-
                     return;
             }
         }

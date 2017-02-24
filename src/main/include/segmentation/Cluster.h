@@ -34,6 +34,7 @@ public:
 
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clusteringVoxel(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
+    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 private:
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr>
     convertCluster(std::vector<pcl::PointIndices> indices, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);

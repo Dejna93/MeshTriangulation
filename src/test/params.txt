@@ -24,10 +24,10 @@ mls_dilation_iter=2
 mls_dilation_voxel=0.01
 mls_compute_normals=0
 [clustering]
-cluster_type=2
+cluster_type=5
 [cluster]
-euc_cluster_tolerance=2
-euc_min_cluster_size=10
+euc_cluster_tolerance=2.0
+euc_min_cluster_size=25
 euc_max_cluster_size=25000
 [region]
 reg_radius=0.03
@@ -43,7 +43,7 @@ up_sampling_radius=3.0
 up_sampling_step=20
 [normals]
 normal_centroid=1
-normal_radius=300
+normal_radius=10
 normal_k=20
 normal_minus=0
 [laplacian]

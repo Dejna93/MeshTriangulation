@@ -258,3 +258,36 @@ std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clusteringVoxel(pcl::P
     return std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr>();
 }
 
+std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> Cluster::clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());
+// Normal estimation
+    //std::cout << dao.getIntAttribute("thread_num") << " " << dao.getDoubleAttribute("euc_cluster_tolerance") << " " <<dao.getIntAttribute("euc_min_cluster_size") << "\n";
+    pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
+    ne.setNumberOfThreads(dao.getIntAttribute("thread_num"));
+    ne.setInputCloud(cloud);
+
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_n(new pcl::search::KdTree<pcl::PointXYZ>());
+    ne.setSearchMethod(tree_n);
+    ne.setRadiusSearch(dao.getIntAttribute("normal_radius"));
+    ne.compute(*cloud_normals);
+    std::cout << "Estimated the normals" << std::endl;
+
+    // Creating the kdtree object for the search method of the extraction
+    boost::shared_ptr<pcl::KdTree<pcl::PointXYZ> > tree_ec(new pcl::KdTreeFLANN<pcl::PointXYZ>());
+    tree_ec->setInputCloud(cloud);
+
+    // Extracting Euclidean clusters using cloud and its normals
+    std::vector<int> indices;
+    std::vector<pcl::PointIndices> cluster_indices;
+    //const float tolerance = 2.0f; // 50cm tolerance in (x, y, z) coordinate system
+    const double eps_angle = 5 * (M_PI / 180.0); // 5degree tolerance in normals
+    //const unsigned int min_cluster_size = 25;
+
+    pcl::extractEuclideanClusters(*cloud, *cloud_normals, dao.getDoubleAttribute("euc_cluster_tolerance"), tree_ec,
+                                  cluster_indices, eps_angle, dao.getIntAttribute("euc_min_cluster_size"));
+
+    std::cout << "No of clusters formed are " << cluster_indices.size() << std::endl;
+
+    return convertCluster(cluster_indices, cloud);
+}
+
